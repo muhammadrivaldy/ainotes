@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database files
+*.sqlite3
+db_chroma/
+
+# Environment files
+.env
+.venv/
+venv/
+env/
+
+# VS Code settings
+.vscode/
+
+# MacOS system files
+.DS_Store
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore model checkpoints or large data
+*.ckpt
+*.pth
+*.h5
+
+# Ignore build and dist folders
+build/
+dist/
+
+# Ignore coverage reports
+.coverage
+htmlcov/
+coverage.xml
+
+# Ignore test output
+.pytest_cache/
+
+# Add more rules as needed for your workflow

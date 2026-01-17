@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  ainotes-api:
+    build: .
+    container_name: ainotes-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist ChromaDB vector store
+      - ./db_chroma:/app/db_chroma
+      # Persist SQLite chat history
+      - ./chat_history.db:/app/chat_history.db
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - ainotes-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  ainotes-network:
+    name: ainotes-network
+    driver: bridge
