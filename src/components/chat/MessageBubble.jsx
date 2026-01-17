@@ -2,12 +2,20 @@ import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
+import { useTypewriter } from '../../hooks/useTypewriter';
 
-export default function MessageBubble({ message }) {
+export default function MessageBubble({ message, isStreaming = false }) {
   const isUser = message.role === 'user';
+  const { displayedText, isComplete } = useTypewriter(
+    message.content,
+    20,
+    isStreaming && !isUser
+  );
+
+  const contentToDisplay = isStreaming && !isUser ? displayedText : message.content;
 
   const displayContent = useMemo(() => {
-    const safeSplitParts = message.content.split(/(```[\s\S]*?```)/g);
+    const safeSplitParts = contentToDisplay.split(/(```[\s\S]*?```)/g);
 
     return safeSplitParts
       .map((part) => {
@@ -18,7 +26,7 @@ export default function MessageBubble({ message }) {
         });
       })
       .join('');
-  }, [message.content]);
+  }, [contentToDisplay]);
 
   return (
     <div className={`group mb-6 flex w-full ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -31,6 +39,9 @@ export default function MessageBubble({ message }) {
       >
         <div className="prose prose-sm dark:prose-invert wrap-break-words max-w-none">
           <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{displayContent}</ReactMarkdown>
+          {isStreaming && !isUser && !isComplete && (
+            <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-gray-800 dark:bg-gray-100" />
+          )}
         </div>
       </div>
     </div>

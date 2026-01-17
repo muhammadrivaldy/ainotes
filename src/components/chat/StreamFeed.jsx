@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import MessageBubble from './MessageBubble';
 
-export default function StreamFeed({ messages }) {
+export default function StreamFeed({ messages, streamingMessageId }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -19,7 +19,13 @@ export default function StreamFeed({ messages }) {
             <p className="text-lg font-medium">Start your note stream...</p>
           </div>
         ) : (
-          messages.map((msg) => <MessageBubble key={msg.id} message={msg} />)
+          messages.map((msg) => (
+            <MessageBubble
+              key={msg.id}
+              message={msg}
+              isStreaming={msg.id === streamingMessageId}
+            />
+          ))
         )}
         <div ref={bottomRef} />
       </div>

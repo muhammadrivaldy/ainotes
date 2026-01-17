@@ -7,6 +7,7 @@ import { sendMessage, getChatHistory } from '../services/api';
 export default function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [streamingMessageId, setStreamingMessageId] = useState(null);
 
   // Load chat history on mount
   useEffect(() => {
@@ -78,28 +79,49 @@ export default function ChatPage() {
       const response = await sendMessage(text);
 
       // 4. Replace loading message with AI response
+      const aiMessageId = Date.now() + 1;
+      const messageContent = response.response;
+      setStreamingMessageId(aiMessageId);
+
       setMessages((prev) =>
         prev
           .filter((msg) => msg.id !== 'loading')
           .concat({
-            id: Date.now() + 1,
+            id: aiMessageId,
             role: 'ai',
-            content: response.response,
+            content: messageContent,
           })
       );
+
+      // Clear streaming state after typewriter effect completes
+      // Speed is 20ms per character
+      const estimatedDuration = messageContent.length * 20 + 500;
+      setTimeout(() => {
+        setStreamingMessageId(null);
+      }, estimatedDuration);
     } catch (err) {
       console.error('Failed to send message:', err);
 
       // Replace loading message with error
+      const errorMessageId = Date.now() + 1;
+      const errorContent = '⚠️ **Error:** Failed to get response from backend. Please try again.';
+      setStreamingMessageId(errorMessageId);
+
       setMessages((prev) =>
         prev
           .filter((msg) => msg.id !== 'loading')
           .concat({
-            id: Date.now() + 1,
+            id: errorMessageId,
             role: 'ai',
-            content: '⚠️ **Error:** Failed to get response from backend. Please try again.',
+            content: errorContent,
           })
       );
+
+      // Clear streaming state after typewriter effect completes
+      const estimatedDuration = errorContent.length * 20 + 500;
+      setTimeout(() => {
+        setStreamingMessageId(null);
+      }, estimatedDuration);
     }
   };
 
@@ -117,7 +139,7 @@ export default function ChatPage() {
 
   return (
     <AppLayout>
-      <StreamFeed messages={messages} />
+      <StreamFeed messages={messages} streamingMessageId={streamingMessageId} />
       <InputArea onSend={handleSend} onClear={handleClear} />
     </AppLayout>
   );
