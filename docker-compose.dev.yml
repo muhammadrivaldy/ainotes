@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  ainotes-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    container_name: ainotes-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.js:/app/vite.config.js
+      - ./tailwind.config.js:/app/tailwind.config.js
+      - ./postcss.config.js:/app/postcss.config.js
+      # Prevent overwriting node_modules
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    restart: unless-stopped
+    networks:
+      - ainotes-network
+
+networks:
+  ainotes-network:
+    name: ainotes-network
+    driver: bridge

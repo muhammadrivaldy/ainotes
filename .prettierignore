@@ -1,0 +1,7 @@
+build
+coverage
+.next/
+out/
+node_modules/
+.git/
+.vscode/
