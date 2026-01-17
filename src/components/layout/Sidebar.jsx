@@ -1,9 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
-import { Settings, User, Moon, Sun, BookOpen, PanelLeftClose } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { Settings, User, Moon, Sun, BookOpen, PanelLeftClose, LogOut } from 'lucide-react';
 
 export default function Sidebar({ onClose }) {
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <aside className="flex h-full w-64 flex-col">
@@ -28,7 +37,34 @@ export default function Sidebar({ onClose }) {
         <SidebarItem icon={<User />} label="Profile" />
       </nav>
 
-      {/* Footer / Theme Toggle */}
+      {/* User Profile Section */}
+      {user && (
+        <div className="border-t border-gray-200 p-4 dark:border-gray-800">
+          <div className="flex items-center gap-3">
+            {user.picture ? (
+              <img
+                src={user.picture}
+                alt={user.name}
+                className="h-10 w-10 rounded-full"
+              />
+            ) : (
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
+                {user.name?.charAt(0) || 'U'}
+              </div>
+            )}
+            <div className="flex-1 overflow-hidden">
+              <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
+                {user.name}
+              </p>
+              <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                {user.email}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer / Theme Toggle & Logout */}
       <div className="border-t border-gray-200 p-4 dark:border-gray-800">
         <button
           onClick={toggleTheme}
@@ -36,6 +72,13 @@ export default function Sidebar({ onClose }) {
         >
           {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
           <span className="ml-3 font-medium">{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
+        </button>
+        <button
+          onClick={handleLogout}
+          className="mt-2 flex w-full items-center rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
+        >
+          <LogOut className="h-5 w-5" />
+          <span className="ml-3 font-medium">Logout</span>
         </button>
       </div>
     </aside>
