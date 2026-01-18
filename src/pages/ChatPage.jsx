@@ -111,6 +111,9 @@ export default function ChatPage() {
     try {
       // Clear chat history from backend database
       await clearChatHistory();
+
+      // Clear local state to remove chat bubbles immediately
+      setMessages([]);
     } catch (err) {
       console.error('Failed to clear history:', err);
       // Show error message to user
