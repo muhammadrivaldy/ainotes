@@ -27,6 +27,9 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
 
 ## Quick Start
 
+> **Note:** This repository provides the backend API for the AI Notes application.  
+> To use this API with a web interface, connect it to the [ainotes-frontend](https://github.com/muhammadrivaldy/ainotes-frontend) project.
+
 ### Without Docker
 
 #### Prerequisites
