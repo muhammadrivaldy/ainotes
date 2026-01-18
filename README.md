@@ -31,7 +31,6 @@ A modern web-based "Second Brain" application built with React and Vite. AI Note
   - [TypeScript](#typescript)
 - [License](#license)
 
-
 ## Features
 
 - **Google OAuth Authentication** - Secure sign-in with Google accounts
