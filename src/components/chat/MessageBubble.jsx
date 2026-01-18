@@ -19,9 +19,12 @@ import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
+import { Bot, User } from 'lucide-react';
 import { useTypewriter } from '../../hooks/useTypewriter';
+import { useAuth } from '../../context/AuthContext';
 
 export default function MessageBubble({ message, isStreaming = false }) {
+  const { user } = useAuth();
   const isUser = message.role === 'user';
   const { displayedText, isComplete } = useTypewriter(message.content, 20, isStreaming && !isUser);
 
@@ -42,7 +45,16 @@ export default function MessageBubble({ message, isStreaming = false }) {
   }, [contentToDisplay]);
 
   return (
-    <div className={`group mb-6 flex w-full ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div
+      className={`group mb-6 flex w-full items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
+    >
+      {/* AI Avatar - Left side */}
+      {!isUser && (
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-purple-500 to-indigo-600 shadow-sm">
+          <Bot className="h-5 w-5 text-white" />
+        </div>
+      )}
+
       <div
         className={`relative max-w-[80%] rounded-2xl p-4 shadow-sm md:max-w-[70%] ${
           isUser
@@ -57,6 +69,24 @@ export default function MessageBubble({ message, isStreaming = false }) {
           )}
         </div>
       </div>
+
+      {/* User Avatar - Right side */}
+      {isUser && (
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-sm">
+          {user?.picture ? (
+            <img
+              src={user.picture}
+              alt={user.name || 'User'}
+              referrerPolicy="no-referrer"
+              className="h-12 w-12 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-blue-700">
+              <User className="h-5 w-5 text-white" />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
