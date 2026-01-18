@@ -1,3 +1,20 @@
+/*
+    AI Notes - A modern web-based "Second Brain" application
+    Copyright (C) 2026 Rivaldy
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
@@ -57,9 +74,7 @@ export default function Sidebar({ onClose }) {
               <p className="truncate text-sm font-medium text-gray-900 dark:text-gray-100">
                 {user.name}
               </p>
-              <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                {user.email}
-              </p>
+              <p className="truncate text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
             </div>
           </div>
         </div>
