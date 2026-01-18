@@ -2,6 +2,36 @@
 
 A modern web-based "Second Brain" application built with React and Vite. AI Notes is a personal knowledge base system designed to function as a conversational AI interface where users can store and retrieve information naturally through a continuous "Life Stream" timeline.
 
+## Table of Contents
+
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Quick Start](#quick-start)
+  - [Without Docker](#without-docker)
+  - [With Docker](#with-docker)
+- [Project Structure](#project-structure)
+- [Docker Commands](#docker-commands)
+  - [Production](#production)
+  - [Development](#development)
+  - [Clean Up](#clean-up)
+- [Google OAuth Setup](#google-oauth-setup)
+- [Configuration](#configuration)
+  - [Customize Ports](#customize-ports)
+  - [Environment Variables](#environment-variables)
+- [Docker Details](#docker-details)
+  - [Production Setup](#production-setup)
+  - [Development Setup](#development-setup)
+- [Troubleshooting](#troubleshooting)
+  - [Port Already in Use](#port-already-in-use)
+  - [Changes Not Reflecting (Docker Development)](#changes-not-reflecting-docker-development)
+  - [Container Won't Start](#container-wont-start)
+  - [Node Modules Issues (Local Development)](#node-modules-issues-local-development)
+- [React & Vite](#react--vite)
+  - [React Compiler](#react-compiler)
+  - [TypeScript](#typescript)
+- [License](#license)
+
+
 ## Features
 
 - **Google OAuth Authentication** - Secure sign-in with Google accounts
