@@ -20,11 +20,7 @@ export default function StreamFeed({ messages, streamingMessageId }) {
           </div>
         ) : (
           messages.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              message={msg}
-              isStreaming={msg.id === streamingMessageId}
-            />
+            <MessageBubble key={msg.id} message={msg} isStreaming={msg.id === streamingMessageId} />
           ))
         )}
         <div ref={bottomRef} />

@@ -27,29 +27,11 @@ export default function ChatPage() {
       }));
 
       // Add welcome message if history is empty
-      if (transformedMessages.length === 0) {
-        setMessages([
-          {
-            id: 'welcome',
-            role: 'ai',
-            content:
-              '## Welcome to your Second Brain! 🧠\n\nI am ready to help you store and retrieve your notes. Just start typing whatever is on your mind!',
-          },
-        ]);
-      } else {
+      if (transformedMessages.length > 0) {
         setMessages(transformedMessages);
       }
     } catch (err) {
       console.error('Failed to load history:', err);
-      // Show welcome message with error notice
-      setMessages([
-        {
-          id: 'welcome',
-          role: 'ai',
-          content:
-            '## Welcome to your Second Brain! 🧠\n\n⚠️ **Backend connection failed.** Please ensure the backend server is running on port 8000.',
-        },
-      ]);
     } finally {
       setLoading(false);
     }
@@ -129,16 +111,6 @@ export default function ChatPage() {
     try {
       // Clear chat history from backend database
       await clearChatHistory();
-
-      // Clear local state and show welcome message
-      setMessages([
-        {
-          id: 'welcome',
-          role: 'ai',
-          content:
-            '## Welcome to your Second Brain! 🧠\n\nI am ready to help you store and retrieve your notes. Just start typing whatever is on your mind!',
-        },
-      ]);
     } catch (err) {
       console.error('Failed to clear history:', err);
       // Show error message to user
