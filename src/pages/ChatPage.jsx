@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AppLayout from '../components/layout/AppLayout';
 import StreamFeed from '../components/chat/StreamFeed';
 import InputArea from '../components/chat/InputArea';
-import { sendMessage, getChatHistory } from '../services/api';
+import { sendMessage, getChatHistory, clearChatHistory } from '../services/api';
 
 export default function ChatPage() {
   const [messages, setMessages] = useState([]);
@@ -125,16 +125,30 @@ export default function ChatPage() {
     }
   };
 
-  const handleClear = () => {
-    // Clear only the local view, database remains intact
-    setMessages([
-      {
-        id: 'welcome',
+  const handleClear = async () => {
+    try {
+      // Clear chat history from backend database
+      await clearChatHistory();
+
+      // Clear local state and show welcome message
+      setMessages([
+        {
+          id: 'welcome',
+          role: 'ai',
+          content:
+            '## Welcome to your Second Brain! 🧠\n\nI am ready to help you store and retrieve your notes. Just start typing whatever is on your mind!',
+        },
+      ]);
+    } catch (err) {
+      console.error('Failed to clear history:', err);
+      // Show error message to user
+      const errorMsg = {
+        id: Date.now(),
         role: 'ai',
-        content:
-          '## Welcome to your Second Brain! 🧠\n\nI am ready to help you store and retrieve your notes. Just start typing whatever is on your mind!',
-      },
-    ]);
+        content: '⚠️ **Error:** Failed to clear chat history. Please try again.',
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    }
   };
 
   return (

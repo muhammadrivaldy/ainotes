@@ -58,6 +58,31 @@ export const getChatHistory = async () => {
 };
 
 /**
+ * Clear all chat history from the backend
+ * @returns {Promise<{status: string}>}
+ */
+export const clearChatHistory = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/history`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Failed to clear history');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error clearing history:', error);
+    throw error;
+  }
+};
+
+/**
  * Check if the backend is healthy
  * @returns {Promise<{status: string}>}
  */
