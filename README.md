@@ -10,22 +10,9 @@ A modern web-based "Second Brain" application built with React and Vite. AI Note
   - [Without Docker](#without-docker)
   - [With Docker](#with-docker)
 - [Project Structure](#project-structure)
-- [Docker Commands](#docker-commands)
-  - [Production](#production)
-  - [Development](#development)
-  - [Clean Up](#clean-up)
 - [Google OAuth Setup](#google-oauth-setup)
 - [Configuration](#configuration)
-  - [Customize Ports](#customize-ports)
   - [Environment Variables](#environment-variables)
-- [Docker Details](#docker-details)
-  - [Production Setup](#production-setup)
-  - [Development Setup](#development-setup)
-- [Troubleshooting](#troubleshooting)
-  - [Port Already in Use](#port-already-in-use)
-  - [Changes Not Reflecting (Docker Development)](#changes-not-reflecting-docker-development)
-  - [Container Won't Start](#container-wont-start)
-  - [Node Modules Issues (Local Development)](#node-modules-issues-local-development)
 - [React & Vite](#react--vite)
   - [React Compiler](#react-compiler)
   - [TypeScript](#typescript)
@@ -161,53 +148,6 @@ ainotes/
 └── package.json               # Dependencies and scripts
 ```
 
-## Docker Commands
-
-### Production
-
-```bash
-# Start the application
-docker-compose up -d
-
-# Stop the application
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Rebuild and restart
-docker-compose up -d --build
-```
-
-### Development
-
-```bash
-# Start development server
-docker-compose -f docker-compose.dev.yml up -d
-
-# Stop development server
-docker-compose -f docker-compose.dev.yml down
-
-# View development logs
-docker-compose -f docker-compose.dev.yml logs -f
-
-# Rebuild and restart
-docker-compose -f docker-compose.dev.yml up -d --build
-```
-
-### Clean Up
-
-```bash
-# Remove containers and networks
-docker-compose down
-
-# Remove containers, networks, and volumes
-docker-compose down -v
-
-# Remove everything including images
-docker-compose down -v --rmi all
-```
-
 ## Google OAuth Setup
 
 To enable Google authentication, you need to create OAuth credentials:
@@ -231,22 +171,6 @@ To enable Google authentication, you need to create OAuth credentials:
 
 ## Configuration
 
-### Customize Ports
-
-**Production (docker-compose.yml):**
-
-```yaml
-ports:
-  - "3000:80"  # Change 3000 to your desired port
-```
-
-**Development (docker-compose.dev.yml):**
-
-```yaml
-ports:
-  - "3000:5173"  # Change 3000 to your desired port
-```
-
 ### Environment Variables
 
 Add environment variables in docker-compose files:
@@ -262,66 +186,6 @@ Available environment variables:
 
 - `VITE_API_URL` - Backend API endpoint (default: `http://localhost:8000`)
 - `VITE_GOOGLE_CLIENT_ID` - Google OAuth Client ID (required for authentication)
-
-## Docker Details
-
-### Production Setup
-
-- Multi-stage build for optimized image size (~25MB)
-- Nginx web server for serving static files
-- Gzip compression enabled
-- Security headers configured
-- Static asset caching (1 year for immutable assets)
-- SPA routing support
-- Health checks included
-
-### Development Setup
-
-- Hot Module Replacement (HMR) enabled
-- Volume mounting for live code updates
-- Node modules isolated in container
-- Full React dev tools support
-
-## Troubleshooting
-
-### Port Already in Use
-
-Change the port mapping in the respective docker-compose file.
-
-### Changes Not Reflecting (Docker Development)
-
-```bash
-docker-compose -f docker-compose.dev.yml down
-docker-compose -f docker-compose.dev.yml up -d --build
-```
-
-### Container Won't Start
-
-Check the logs:
-
-```bash
-docker-compose logs -f
-```
-
-### Node Modules Issues (Local Development)
-
-```bash
-# Clear node_modules and reinstall
-rm -rf node_modules package-lock.json
-npm install
-```
-
-## React & Vite
-
-This project uses [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) for Fast Refresh.
-
-### React Compiler
-
-The React Compiler is not enabled due to its impact on dev & build performance. To add it, see [React Compiler documentation](https://react.dev/learn/react-compiler/installation).
-
-### TypeScript
-
-For production applications, consider migrating to TypeScript with type-aware lint rules. See the [Vite TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for more information.
 
 ## License
 
