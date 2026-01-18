@@ -13,9 +13,6 @@ A modern web-based "Second Brain" application built with React and Vite. AI Note
 - [Google OAuth Setup](#google-oauth-setup)
 - [Configuration](#configuration)
   - [Environment Variables](#environment-variables)
-- [React & Vite](#react--vite)
-  - [React Compiler](#react-compiler)
-  - [TypeScript](#typescript)
 - [License](#license)
 
 ## Features
