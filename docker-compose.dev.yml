@@ -61,7 +61,8 @@ services:
   ainotes-website:
     build:
       context: ./website
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
+      target: development
     container_name: ainotes-website-dev
     ports:
       - "4321:4321"

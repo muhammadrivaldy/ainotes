@@ -58,6 +58,7 @@ services:
     build:
       context: ./website
       dockerfile: Dockerfile
+      target: production
     container_name: ainotes-website
     ports:
       - "3000:80"

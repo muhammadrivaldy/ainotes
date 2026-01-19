@@ -1,4 +1,4 @@
-# Multi-stage build for Astro landing page
+# Multi-stage Dockerfile for Astro landing page
 
 # Stage 1: Build the application
 FROM node:20-alpine AS builder
@@ -17,7 +17,7 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Stage 2: Production with Nginx
+# Stage 2: Production - Serve with Nginx
 FROM nginx:alpine AS production
 
 # Copy built files from builder stage
@@ -31,3 +31,23 @@ EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+# Stage 3: Development
+FROM node:20-alpine AS development
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy application files
+COPY . .
+
+# Expose Astro dev server port
+EXPOSE 4321
+
+# Start development server
+CMD ["npm", "run", "dev", "--", "--host"]
