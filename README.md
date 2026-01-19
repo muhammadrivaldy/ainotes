@@ -2,6 +2,15 @@
 
 AI-powered "Second Brain" application for storing and retrieving information through natural language conversations.
 
+## Table of Contents
+
+- [Structure](#structure)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Common Commands](#common-commands)
+- [Documentation](#documentation)
+- [License](#license)
+
 ## Structure
 
 ```text
