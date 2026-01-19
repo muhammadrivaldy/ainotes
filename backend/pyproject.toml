@@ -1,0 +1,7 @@
+[project]
+name = "ainotes"
+version = "0.1.0"
+description = "AI Notes API"
+license = {text = "GPL-3.0-or-later"}
+readme = "README.md"
+requires-python = ">=3.11"
