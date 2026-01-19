@@ -1,0 +1,122 @@
+---
+---
+
+<div class="language-switcher relative">
+  <button
+    id="lang-button"
+    class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-100 transition"
+  >
+    <span id="current-flag" class="text-xl">🇺🇸</span>
+    <span id="current-lang" class="uppercase">EN</span>
+    <svg class="w-4 h-4 transition-transform" id="lang-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+    </svg>
+  </button>
+
+  <div
+    id="lang-dropdown"
+    class="hidden absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-50"
+  >
+    <button
+      data-lang="en"
+      data-flag="🇺🇸"
+      class="lang-option w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center justify-between text-slate-700"
+    >
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🇺🇸</span>
+        <span>English</span>
+      </div>
+      <svg class="w-4 h-4 text-blue-600 hidden" data-check="en" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+    <button
+      data-lang="id"
+      data-flag="🇮🇩"
+      class="lang-option w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center justify-between text-slate-700"
+    >
+      <div class="flex items-center gap-2">
+        <span class="text-lg">🇮🇩</span>
+        <span>Indonesia</span>
+      </div>
+      <svg class="w-4 h-4 text-blue-600 hidden" data-check="id" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  const langButton = document.getElementById('lang-button');
+  const langDropdown = document.getElementById('lang-dropdown');
+  const currentLangSpan = document.getElementById('current-lang');
+  const currentFlagSpan = document.getElementById('current-flag');
+  const langChevron = document.getElementById('lang-chevron');
+  const langOptions = document.querySelectorAll('.lang-option');
+
+  // Get saved language or default to 'en'
+  let currentLang = localStorage.getItem('language') || 'en';
+
+  // Update UI on load
+  updateLanguageUI(currentLang);
+
+  // Toggle dropdown
+  langButton?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = langDropdown?.classList.contains('hidden');
+    if (isHidden) {
+      langDropdown?.classList.remove('hidden');
+      langChevron?.classList.add('rotate-180');
+    } else {
+      langDropdown?.classList.add('hidden');
+      langChevron?.classList.remove('rotate-180');
+    }
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', () => {
+    langDropdown?.classList.add('hidden');
+    langChevron?.classList.remove('rotate-180');
+  });
+
+  // Handle language selection
+  langOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      const lang = option.getAttribute('data-lang');
+      if (lang && (lang === 'en' || lang === 'id')) {
+        currentLang = lang;
+        localStorage.setItem('language', lang);
+        document.documentElement.lang = lang;
+        updateLanguageUI(lang);
+        window.dispatchEvent(new CustomEvent('languageChange', { detail: lang }));
+        langDropdown?.classList.add('hidden');
+        langChevron?.classList.remove('rotate-180');
+      }
+    });
+  });
+
+  function updateLanguageUI(lang: string) {
+    // Update current language display
+    if (currentLangSpan) {
+      currentLangSpan.textContent = lang.toUpperCase();
+    }
+
+    // Update current flag display
+    const flag = lang === 'en' ? '🇺🇸' : '🇮🇩';
+    if (currentFlagSpan) {
+      currentFlagSpan.textContent = flag;
+    }
+
+    // Update checkmarks
+    document.querySelectorAll('[data-check]').forEach(check => {
+      const checkLang = check.getAttribute('data-check');
+      if (checkLang === lang) {
+        check.classList.remove('hidden');
+        check.closest('.lang-option')?.classList.add('text-blue-600', 'font-medium');
+      } else {
+        check.classList.add('hidden');
+        check.closest('.lang-option')?.classList.remove('text-blue-600', 'font-medium');
+      }
+    });
+  }
+</script>
