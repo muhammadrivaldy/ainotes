@@ -4,7 +4,7 @@ AI-powered "Second Brain" application for storing and retrieving information thr
 
 ## Structure
 
-```
+```text
 ainotes/
 ├── backend/     # FastAPI + LangGraph + ChromaDB
 ├── frontend/    # React 19 + Vite
@@ -30,9 +30,10 @@ make dev-all    # Requires 3 terminals for backend, frontend, website
 ```
 
 **Access:**
-- Backend API: http://localhost:8000
-- Frontend: http://localhost:5173
-- Website: http://localhost:4321
+
+- Backend API: <http://localhost:8000>
+- Frontend: <http://localhost:5173>
+- Website: <http://localhost:4321>
 
 ### Production
 
@@ -41,21 +42,22 @@ docker-compose up -d
 ```
 
 **Access:**
-- Backend API: http://localhost:8000
-- Frontend: http://localhost:8080
-- Website: http://localhost:3000
+
+- Backend API: <http://localhost:8000>
+- Frontend: <http://localhost:8080>
+- Website: <http://localhost:3000>
 
 ## Configuration
 
 ### Required API Keys
 
 1. **OpenRouter API Key** (backend)
-   - Get from: https://openrouter.ai/
+   - Get from: <https://openrouter.ai/>
    - Add to `backend/.env`: `OPENROUTER_API_KEY=your_key`
 
 2. **Google OAuth Client ID** (frontend)
-   - Get from: https://console.cloud.google.com/apis/credentials
-   - Add to `frontend/.env.development`: `VITE_GOOGLE_CLIENT_ID=your_id`
+   - Get from: <https://console.cloud.google.com/apis/credentials>
+   - Add to `frontend/.env`: `VITE_GOOGLE_CLIENT_ID=your_id`
    - Add authorized origin: `http://localhost:5173`
 
 ## Common Commands
@@ -78,10 +80,4 @@ make status        # Check service status
 
 ## License
 
-GPL-3.0 - See [LICENSE](LICENSE) for details
-
-## Contributing
-
-1. Each component has its own README with detailed setup
-2. See `*/CLAUDE.md` files for development guidelines
-3. Run tests before submitting: `make test-all`
+This project is licensed under the GNU General Public License v3.0 (GPLv3). See the [LICENSE](LICENSE) file for details.
