@@ -2,6 +2,21 @@
 
 A FastAPI-based "Second Brain" API that stores and retrieves information using vector embeddings. This backend provides intelligent memory storage and semantic search capabilities, allowing users to save, query, and delete information through natural language interactions powered by LangChain and ChromaDB.
 
+## Table of Contents
+
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Quick Start](#quick-start)
+  - [Without Docker](#without-docker)
+  - [With Docker](#with-docker)
+- [Project Structure](#project-structure)
+- [Connecting with Frontend](#connecting-with-frontend)
+- [Configuration](#configuration)
+- [Docker Details](#docker-details)
+- [Troubleshooting](#troubleshooting)
+- [Architecture](#architecture)
+- [License](#license)
+
 ## Features
 
 - **Natural Language Storage** - Save information through conversational statements
@@ -114,153 +129,6 @@ ainotes/
 ├── docker-compose.yml         # Docker Compose configuration
 ├── Makefile                   # Local development commands
 └── README.md                  # This file
-```
-
-## Docker Commands
-
-### Production
-
-```bash
-# Start the API
-docker-compose up -d
-
-# Stop the API
-docker-compose down
-
-# View logs
-docker-compose logs -f
-
-# Restart the API
-docker-compose restart
-
-# Rebuild and restart
-docker-compose up -d --build
-```
-
-### Clean Up
-
-```bash
-# Remove containers and networks
-docker-compose down
-
-# Remove containers, networks, and volumes
-docker-compose down -v
-
-# Remove everything including images
-docker-compose down -v --rmi all
-```
-
-## API Endpoints
-
-### Chat
-
-**POST** `/chat`
-
-Send a message to the Second Brain assistant.
-
-**Request:**
-
-```json
-{
-  "message": "Remember that my favorite color is blue"
-}
-```
-
-**Response:**
-
-```json
-{
-  "response": "Information stored successfully."
-}
-```
-
-### History
-
-**GET** `/history`
-
-Retrieve all chat history.
-
-**Response:**
-
-```json
-[
-  {
-    "id": 1,
-    "role": "user",
-    "content": "Remember that my favorite color is blue",
-    "timestamp": "2026-01-17T10:30:00"
-  },
-  {
-    "id": 2,
-    "role": "assistant",
-    "content": "Information stored successfully.",
-    "timestamp": "2026-01-17T10:30:01"
-  }
-]
-```
-
-**DELETE** `/history`
-
-Clear all chat history.
-
-**Response:**
-
-```json
-{
-  "status": "History cleared"
-}
-```
-
-### Health Check
-
-**GET** `/`
-
-Check API status.
-
-**Response:**
-
-```json
-{
-  "status": "Second Brain is active"
-}
-```
-
-## Usage Examples
-
-### Store Information
-
-```bash
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Remember that my favorite color is blue"}'
-```
-
-### Query Information
-
-```bash
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "What is my favorite color?"}'
-```
-
-### Delete Information
-
-```bash
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Delete information about my favorite color"}'
-```
-
-### Get Chat History
-
-```bash
-curl http://localhost:8000/history
-```
-
-### Clear History
-
-```bash
-curl -X DELETE http://localhost:8000/history
 ```
 
 ## Connecting with Frontend
