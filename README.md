@@ -1,10 +1,12 @@
 # AI Notes - Landing Page
 
-A clean, simple landing page for AI Notes, your Second Brain application. Built with Astro and Tailwind CSS.
+An open-source landing page template for AI Notes, your Second Brain application. Built with Astro and Tailwind CSS. Fork, customize, and self-host this project.
 
 ## Overview
 
 AI Notes is a conversational knowledge base that helps you store and retrieve information naturally through conversation. This landing page focuses on explaining why people need this application and how it solves real problems.
+
+This is an open-source project released under the GPL v3 license. You are free to fork, modify, and self-host this landing page.
 
 ## Tech Stack
 
@@ -122,4 +124,4 @@ Replace the placeholder sections with your actual images:
 
 ## License
 
-ISC
+This project is licensed under the GNU General Public License v3.0 (GPLv3). See the [LICENSE](LICENSE) file for details.
