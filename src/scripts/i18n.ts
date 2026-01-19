@@ -23,8 +23,9 @@ function updatePageContent(lang: Language) {
   updateElementText('[data-i18n="hero.subtitle"]', t.hero.subtitle);
   updateElementText('[data-i18n="hero.ctaPrimary"]', t.hero.ctaPrimary);
   updateElementText('[data-i18n="hero.ctaSecondary"]', t.hero.ctaSecondary);
-  updateElementText('[data-i18n="hero.freeToStart"]', t.hero.freeToStart);
-  updateElementText('[data-i18n="hero.noCreditCard"]', t.hero.noCreditCard);
+  updateElementText('[data-i18n="hero.openSource"]', t.hero.openSource);
+  updateElementText('[data-i18n="hero.selfHost"]', t.hero.selfHost);
+  updateElementText('[data-i18n="hero.yourData"]', t.hero.yourData);
   updateElementText('[data-i18n="hero.imageAlt"]', t.hero.imageAlt);
 
   // Update features section
@@ -35,10 +36,10 @@ function updatePageContent(lang: Language) {
   updateElementText('[data-i18n="features.forgetThings.description"]', t.features.forgetThings.description);
   updateElementText('[data-i18n="features.tooComplicated.title"]', t.features.tooComplicated.title);
   updateElementText('[data-i18n="features.tooComplicated.description"]', t.features.tooComplicated.description);
-  updateElementText('[data-i18n="features.infoOverload.title"]', t.features.infoOverload.title);
-  updateElementText('[data-i18n="features.infoOverload.description"]', t.features.infoOverload.description);
-  updateElementText('[data-i18n="features.alreadyKnow.title"]', t.features.alreadyKnow.title);
-  updateElementText('[data-i18n="features.alreadyKnow.description"]', t.features.alreadyKnow.description);
+  updateElementText('[data-i18n="features.dataOwnership.title"]', t.features.dataOwnership.title);
+  updateElementText('[data-i18n="features.dataOwnership.description"]', t.features.dataOwnership.description);
+  updateElementText('[data-i18n="features.customizable.title"]', t.features.customizable.title);
+  updateElementText('[data-i18n="features.customizable.description"]', t.features.customizable.description);
 
   // Update demo section
   updateElementText('[data-i18n="demo.badge"]', t.demo.badge);
@@ -57,6 +58,7 @@ function updatePageContent(lang: Language) {
   updateElementText('[data-i18n="benefits.subtitle"]', t.benefits.subtitle);
   updateElementText('[data-i18n="benefits.knowledgeWorkers.title"]', t.benefits.knowledgeWorkers.title);
   updateElementText('[data-i18n="benefits.personalUse.title"]', t.benefits.personalUse.title);
+  updateElementText('[data-i18n="benefits.developers.title"]', t.benefits.developers.title);
 
   // Update knowledge workers items
   t.benefits.knowledgeWorkers.items.forEach((item, index) => {
@@ -66,6 +68,11 @@ function updatePageContent(lang: Language) {
   // Update personal use items
   t.benefits.personalUse.items.forEach((item, index) => {
     updateElementText(`[data-i18n="benefits.personalUse.item${index}"]`, item);
+  });
+
+  // Update developers items
+  t.benefits.developers.items.forEach((item, index) => {
+    updateElementText(`[data-i18n="benefits.developers.item${index}"]`, item);
   });
 
   updateElementText('[data-i18n="benefits.comparison.title"]', t.benefits.comparison.title);
@@ -87,21 +94,21 @@ function updatePageContent(lang: Language) {
   updateElementText('[data-i18n="cta.subtitle"]', t.cta.subtitle);
   updateElementText('[data-i18n="cta.primaryButton"]', t.cta.primaryButton);
   updateElementText('[data-i18n="cta.secondaryButton"]', t.cta.secondaryButton);
-  updateElementText('[data-i18n="cta.freeToStart"]', t.cta.freeToStart);
-  updateElementText('[data-i18n="cta.noCreditCard"]', t.cta.noCreditCard);
-  updateElementText('[data-i18n="cta.cancelAnytime"]', t.cta.cancelAnytime);
+  updateElementText('[data-i18n="cta.openSource"]', t.cta.openSource);
+  updateElementText('[data-i18n="cta.selfHostReady"]', t.cta.selfHostReady);
+  updateElementText('[data-i18n="cta.license"]', t.cta.license);
 
   // Update footer
   updateElementText('[data-i18n="footer.description"]', t.footer.description);
   updateElementText('[data-i18n="footer.product.title"]', t.footer.product.title);
   updateElementText('[data-i18n="footer.product.features"]', t.footer.product.features);
-  updateElementText('[data-i18n="footer.product.howItWorks"]', t.footer.product.howItWorks);
-  updateElementText('[data-i18n="footer.product.pricing"]', t.footer.product.pricing);
-  updateElementText('[data-i18n="footer.company.title"]', t.footer.company.title);
-  updateElementText('[data-i18n="footer.company.about"]', t.footer.company.about);
-  updateElementText('[data-i18n="footer.company.privacy"]', t.footer.company.privacy);
-  updateElementText('[data-i18n="footer.company.terms"]', t.footer.company.terms);
-  updateElementText('[data-i18n="footer.company.contact"]', t.footer.company.contact);
+  updateElementText('[data-i18n="footer.product.selfHosting"]', t.footer.product.selfHosting);
+  updateElementText('[data-i18n="footer.product.documentation"]', t.footer.product.documentation);
+  updateElementText('[data-i18n="footer.resources.title"]', t.footer.resources.title);
+  updateElementText('[data-i18n="footer.resources.github"]', t.footer.resources.github);
+  updateElementText('[data-i18n="footer.resources.contributing"]', t.footer.resources.contributing);
+  updateElementText('[data-i18n="footer.resources.community"]', t.footer.resources.community);
+  updateElementText('[data-i18n="footer.resources.license"]', t.footer.resources.license);
   updateElementText('[data-i18n="footer.copyright"]', t.footer.copyright);
 }
 

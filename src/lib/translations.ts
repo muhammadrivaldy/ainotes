@@ -63,18 +63,18 @@ export const translations = {
         title: "Knowledge Workers",
         items: [
           "Store code snippets and technical notes",
-          "Remember meeting decisions and action items",
-          "Keep track of project requirements",
-          "Save important commands and configurations",
+          "Remember meeting decisions",
+          "Track project requirements",
+          "Save commands and configs",
         ],
       },
       personalUse: {
         title: "Personal Use",
         items: [
-          "Remember birthdays and special dates",
-          "Save recipes and book recommendations",
-          "Store password hints and account details",
-          "Keep random thoughts and ideas",
+          "Remember birthdays and dates",
+          "Save recipes and book recs",
+          "Store password hints",
+          "Keep thoughts and ideas",
         ],
       },
       developers: {
@@ -83,7 +83,7 @@ export const translations = {
           "Full control over your data",
           "Deploy anywhere you want",
           "Customize to your needs",
-          "Contribute to the community",
+          "Contribute to community",
         ],
       },
       comparison: {
@@ -198,27 +198,27 @@ export const translations = {
       knowledgeWorkers: {
         title: "Pekerja Pengetahuan",
         items: [
-          "Simpan cuplikan kode dan catatan teknis",
-          "Ingat keputusan rapat dan item tindakan",
+          "Simpan cuplikan kode dan catatan",
+          "Ingat keputusan rapat",
           "Lacak persyaratan proyek",
-          "Simpan perintah dan konfigurasi penting",
+          "Simpan perintah dan config",
         ],
       },
       personalUse: {
         title: "Penggunaan Pribadi",
         items: [
-          "Ingat ulang tahun dan tanggal spesial",
-          "Simpan resep dan rekomendasi buku",
-          "Simpan petunjuk kata sandi dan detail akun",
-          "Simpan pemikiran dan ide acak",
+          "Ingat ulang tahun dan tanggal",
+          "Simpan resep dan rekomendasi",
+          "Simpan petunjuk kata sandi",
+          "Simpan pemikiran dan ide",
         ],
       },
       developers: {
         title: "Developer & Self-Hoster",
         items: [
           "Kontrol penuh atas data Anda",
-          "Deploy di mana saja Anda mau",
-          "Sesuaikan dengan kebutuhan Anda",
+          "Deploy di mana saja",
+          "Sesuaikan kebutuhan Anda",
           "Berkontribusi ke komunitas",
         ],
       },
