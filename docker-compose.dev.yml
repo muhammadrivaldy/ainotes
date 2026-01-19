@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # Backend API Service (Development)
@@ -47,7 +47,7 @@ services:
       # Exclude node_modules for performance
       - /app/node_modules
     environment:
-      - VITE_API_URL=${VITE_API_URL:-http://localhost:8000}
+      - VITE_API_URL=${VITE_API_URL}
       - VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
       - NODE_ENV=development
     command: npm run dev -- --host 0.0.0.0
