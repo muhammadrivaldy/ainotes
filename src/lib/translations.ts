@@ -6,14 +6,15 @@ export const translations = {
       getStarted: "Get Started",
     },
     hero: {
-      badge: "Your Personal Knowledge Base",
+      badge: "Open Source Knowledge Base",
       title: "Your Second",
       titleHighlight: "Brain",
-      subtitle: "Stop struggling to remember everything. AI Notes helps you store and retrieve information through natural conversation—just like talking to a friend.",
-      ctaPrimary: "Get Started Free",
-      ctaSecondary: "Watch Demo",
-      freeToStart: "Free to start",
-      noCreditCard: "No credit card",
+      subtitle: "Open-source knowledge management you can self-host. Store and retrieve information through natural conversation—your data, your server, your rules.",
+      ctaPrimary: "Get Started",
+      ctaSecondary: "View on GitHub",
+      openSource: "Open Source",
+      selfHost: "Self-Host",
+      yourData: "Your Data",
       imageAlt: "Your screenshot here",
     },
     features: {
@@ -28,13 +29,13 @@ export const translations = {
         title: "Traditional note apps are too complicated",
         description: "Stop wasting time organizing folders, creating tags, or searching through hundreds of notes. AI Notes understands context automatically—just ask and it finds what you need.",
       },
-      infoOverload: {
-        title: "Information overload is real",
-        description: "Knowledge workers deal with massive amounts of information daily. Offload it to your Second Brain and reduce cognitive load. Remember everything without the mental burden.",
+      dataOwnership: {
+        title: "Your data stays yours",
+        description: "Self-host on your own server and keep complete control over your data. No cloud dependency, no vendor lock-in, no privacy concerns. Your knowledge stays private.",
       },
-      alreadyKnow: {
-        title: "You already know how to use it",
-        description: "If you've used ChatGPT, you already know how to use AI Notes. No learning curve. Just natural conversation to store, retrieve, and update your knowledge.",
+      customizable: {
+        title: "Fully customizable and extensible",
+        description: "Open source means you can modify, extend, and adapt AI Notes to your needs. Add features, integrate with your tools, or contribute back to the community.",
       },
     },
     demo: {
@@ -76,6 +77,15 @@ export const translations = {
           "Keep random thoughts and ideas",
         ],
       },
+      developers: {
+        title: "Developers & Self-Hosters",
+        items: [
+          "Full control over your data",
+          "Deploy anywhere you want",
+          "Customize to your needs",
+          "Contribute to the community",
+        ],
+      },
       comparison: {
         title: "The Difference",
         traditional: {
@@ -83,8 +93,8 @@ export const translations = {
           items: [
             "Organize into folders",
             "Remember to add tags",
-            "Search through files",
-            "Complex interfaces",
+            "Data stored on third-party servers",
+            "Vendor lock-in",
           ],
         },
         aiNotes: {
@@ -92,35 +102,35 @@ export const translations = {
           items: [
             "Just talk naturally",
             "AI understands context",
-            "Ask and retrieve instantly",
-            "Simple conversation",
+            "Self-host your own data",
+            "Open source and customizable",
           ],
         },
       },
     },
     cta: {
-      title: "Ready to Build Your Second Brain?",
-      subtitle: "Join thousands who've offloaded their memory to AI Notes. Start storing and retrieving information naturally—no credit card required.",
-      primaryButton: "Get Started Free",
-      secondaryButton: "Watch Demo",
-      freeToStart: "Free to start",
-      noCreditCard: "No credit card",
-      cancelAnytime: "Cancel anytime",
+      title: "Ready to Own Your Second Brain?",
+      subtitle: "Take control of your knowledge with open-source AI Notes. Self-host for complete privacy or try our cloud version—your choice, your data.",
+      primaryButton: "Try Cloud Version",
+      secondaryButton: "Self-Host Now",
+      openSource: "Open Source",
+      selfHostReady: "Self-Host Ready",
+      license: "GPL v3 License",
     },
     footer: {
       description: "Your Second Brain for storing and retrieving knowledge naturally through conversation.",
       product: {
         title: "Product",
         features: "Features",
-        howItWorks: "How It Works",
-        pricing: "Pricing",
+        selfHosting: "Self-Hosting",
+        documentation: "Documentation",
       },
-      company: {
-        title: "Company",
-        about: "About",
-        privacy: "Privacy",
-        terms: "Terms",
-        contact: "Contact",
+      resources: {
+        title: "Resources",
+        github: "GitHub",
+        contributing: "Contributing",
+        community: "Community",
+        license: "License",
       },
       copyright: "© 2026 AI Notes. All rights reserved.",
     },
@@ -132,14 +142,15 @@ export const translations = {
       getStarted: "Mulai",
     },
     hero: {
-      badge: "Basis Pengetahuan Pribadi Anda",
+      badge: "Basis Pengetahuan Open Source",
       title: "Otak Kedua",
       titleHighlight: "Anda",
-      subtitle: "Berhenti berjuang mengingat segalanya. AI Notes membantu Anda menyimpan dan mengambil informasi melalui percakapan alami—seperti berbicara dengan teman.",
-      ctaPrimary: "Mulai Gratis",
-      ctaSecondary: "Lihat Demo",
-      freeToStart: "Gratis untuk memulai",
-      noCreditCard: "Tanpa kartu kredit",
+      subtitle: "Manajemen pengetahuan open source yang dapat Anda host sendiri. Simpan dan ambil informasi melalui percakapan alami—data Anda, server Anda, aturan Anda.",
+      ctaPrimary: "Mulai",
+      ctaSecondary: "Lihat di GitHub",
+      openSource: "Open Source",
+      selfHost: "Self-Host",
+      yourData: "Data Anda",
       imageAlt: "Screenshot Anda di sini",
     },
     features: {
@@ -154,13 +165,13 @@ export const translations = {
         title: "Aplikasi catatan tradisional terlalu rumit",
         description: "Berhenti membuang waktu mengatur folder, membuat tag, atau mencari ratusan catatan. AI Notes memahami konteks secara otomatis—cukup tanya dan ia menemukan apa yang Anda butuhkan.",
       },
-      infoOverload: {
-        title: "Kelebihan informasi itu nyata",
-        description: "Pekerja pengetahuan berurusan dengan sejumlah besar informasi setiap hari. Bebankan ke Otak Kedua Anda dan kurangi beban kognitif. Ingat segalanya tanpa beban mental.",
+      dataOwnership: {
+        title: "Data Anda tetap milik Anda",
+        description: "Host sendiri di server Anda dan pertahankan kontrol penuh atas data Anda. Tidak ada ketergantungan cloud, tidak ada vendor lock-in, tidak ada masalah privasi. Pengetahuan Anda tetap pribadi.",
       },
-      alreadyKnow: {
-        title: "Anda sudah tahu cara menggunakannya",
-        description: "Jika Anda pernah menggunakan ChatGPT, Anda sudah tahu cara menggunakan AI Notes. Tidak ada kurva pembelajaran. Hanya percakapan alami untuk menyimpan, mengambil, dan memperbarui pengetahuan Anda.",
+      customizable: {
+        title: "Sepenuhnya dapat disesuaikan dan diperluas",
+        description: "Open source berarti Anda dapat memodifikasi, memperluas, dan menyesuaikan AI Notes sesuai kebutuhan Anda. Tambahkan fitur, integrasikan dengan alat Anda, atau berkontribusi kembali ke komunitas.",
       },
     },
     demo: {
@@ -202,6 +213,15 @@ export const translations = {
           "Simpan pemikiran dan ide acak",
         ],
       },
+      developers: {
+        title: "Developer & Self-Hoster",
+        items: [
+          "Kontrol penuh atas data Anda",
+          "Deploy di mana saja Anda mau",
+          "Sesuaikan dengan kebutuhan Anda",
+          "Berkontribusi ke komunitas",
+        ],
+      },
       comparison: {
         title: "Perbedaan",
         traditional: {
@@ -209,8 +229,8 @@ export const translations = {
           items: [
             "Atur ke dalam folder",
             "Ingat untuk menambahkan tag",
-            "Cari melalui file",
-            "Antarmuka yang rumit",
+            "Data disimpan di server pihak ketiga",
+            "Terkunci pada vendor",
           ],
         },
         aiNotes: {
@@ -218,35 +238,35 @@ export const translations = {
           items: [
             "Cukup berbicara secara alami",
             "AI memahami konteks",
-            "Tanya dan ambil secara instan",
-            "Percakapan sederhana",
+            "Host sendiri data Anda",
+            "Open source dan dapat disesuaikan",
           ],
         },
       },
     },
     cta: {
-      title: "Siap Membangun Otak Kedua Anda?",
-      subtitle: "Bergabunglah dengan ribuan orang yang telah membebankan memori mereka ke AI Notes. Mulai menyimpan dan mengambil informasi secara alami—tanpa kartu kredit.",
-      primaryButton: "Mulai Gratis",
-      secondaryButton: "Lihat Demo",
-      freeToStart: "Gratis untuk memulai",
-      noCreditCard: "Tanpa kartu kredit",
-      cancelAnytime: "Batalkan kapan saja",
+      title: "Siap Memiliki Otak Kedua Anda?",
+      subtitle: "Ambil kendali pengetahuan Anda dengan AI Notes open source. Self-host untuk privasi lengkap atau coba versi cloud kami—pilihan Anda, data Anda.",
+      primaryButton: "Coba Versi Cloud",
+      secondaryButton: "Self-Host Sekarang",
+      openSource: "Open Source",
+      selfHostReady: "Siap Self-Host",
+      license: "Lisensi GPL v3",
     },
     footer: {
       description: "Otak Kedua Anda untuk menyimpan dan mengambil pengetahuan secara alami melalui percakapan.",
       product: {
         title: "Produk",
         features: "Fitur",
-        howItWorks: "Cara Kerja",
-        pricing: "Harga",
+        selfHosting: "Self-Hosting",
+        documentation: "Dokumentasi",
       },
-      company: {
-        title: "Perusahaan",
-        about: "Tentang",
-        privacy: "Privasi",
-        terms: "Ketentuan",
-        contact: "Kontak",
+      resources: {
+        title: "Sumber Daya",
+        github: "GitHub",
+        contributing: "Berkontribusi",
+        community: "Komunitas",
+        license: "Lisensi",
       },
       copyright: "© 2026 AI Notes. Semua hak dilindungi.",
     },
