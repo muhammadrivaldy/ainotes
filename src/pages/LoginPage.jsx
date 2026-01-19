@@ -1,6 +1,6 @@
 /*
     AI Notes - A modern web-based "Second Brain" application
-    Copyright (C) 2026 Rivaldy
+    Copyright (C) 2026 AI Notes
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
