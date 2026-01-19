@@ -22,16 +22,22 @@ AI Notes is a conversational knowledge base that helps you store and retrieve in
 ### Installation
 
 1. Install dependencies:
-```bash
-npm install
-```
+
+    ```bash
+    npm install
+    ```
 
 2. Start the development server:
-```bash
-npm run dev
-```
 
-3. Open your browser and visit `http://localhost:4321`
+    ```bash
+    npm run dev
+    ```
+
+3. Open your browser and visit
+
+    ```text
+    http://localhost:3000
+    ```
 
 ### Build for Production
 
@@ -43,8 +49,8 @@ The built files will be in the `dist/` directory.
 
 ## Project Structure
 
-```
-/
+```js
+ainotes/
 ├── public/
 │   └── favicon.svg          # Site favicon
 ├── src/
@@ -67,11 +73,13 @@ The built files will be in the `dist/` directory.
 ## Page Sections
 
 ### Hero Section
+
 - Clean headline: "Your Second Brain"
 - Simple description of what the app does
 - Image placeholder for your screenshot
 
 ### Why You Need AI Notes
+
 - Focuses on problems people face:
   - Forgetting important things
   - Traditional note apps are too complicated
@@ -79,19 +87,23 @@ The built files will be in the `dist/` directory.
   - Easy to use (like ChatGPT)
 
 ### How It Works
+
 - Simple 3-step process
 - Image placeholder for demo screenshot
 
 ### Perfect For
+
 - Knowledge workers use cases
 - Personal use cases
 - Comparison table showing the difference
 
 ### Call-to-Action
+
 - Simple, clean CTA section
 - Get Started button
 
 ### Footer
+
 - Minimal footer with essential links
 
 ## Design Philosophy
