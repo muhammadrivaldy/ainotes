@@ -43,8 +43,7 @@ A modern web-based "Second Brain" application built with React and Vite. AI Note
 
 ## Quick Start
 
-> **Note:** This repository contains only the frontend code for AI Notes. You must run the backend server separately for full functionality.  
-> The backend source code and setup instructions are available at: [ainotes-backend](https://github.com/muhammadrivaldy/ainotes-backend)
+> **Note:** This repository contains only the frontend code for AI Notes. You must run the backend server separately for full functionality. The backend source code and setup instructions are available at: [ainotes-backend](https://github.com/muhammadrivaldy/ainotes-backend)
 
 ### Without Docker
 
