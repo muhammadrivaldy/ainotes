@@ -1,0 +1,158 @@
+# ============================================
+# AI Notes Monorepo - Unified .gitignore
+# ============================================
+
+# -------------------- Python (Backend) --------------------
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python virtual environments
+.env/
+.venv/
+venv/
+env/
+
+# SQLite database files
+*.sqlite3
+chat_history.db
+
+# ChromaDB storage
+db_chroma/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Model checkpoints or large data
+*.ckpt
+*.pth
+*.h5
+
+# Coverage reports
+.coverage
+htmlcov/
+coverage.xml
+
+# Pytest cache
+.pytest_cache/
+
+# -------------------- Node.js (Frontend & Website) --------------------
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+.astro/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Local environment files
+*.local
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn
+.yarn-integrity
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vercel
+.vercel
+
+# -------------------- Environment Variables --------------------
+
+# Environment files (keep .env.example)
+.env
+.env.local
+.env.development
+.env.production
+.env*.local
+!.env.example
+
+# -------------------- IDE and Editor Files --------------------
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# Other editors
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# -------------------- Operating System Files --------------------
+
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Windows
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# -------------------- Docker --------------------
+
+# Docker override files
+docker-compose.override.yml
+
+# -------------------- Temporary Files --------------------
+
+*.tmp
+*.temp
+.cache/
+
+# -------------------- Examples --------------------
+
+examples/

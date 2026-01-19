@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Backend API Service
+  ainotes-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ainotes-api
+    ports:
+      - "8000:8000"
+    volumes:
+      # Persist ChromaDB vector store
+      - ./backend/db_chroma:/app/db_chroma
+      # Persist SQLite chat history
+      - ./backend/chat_history.db:/app/chat_history.db
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    networks:
+      - ainotes-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend React App
+  ainotes-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://ainotes-api:8000}
+        - VITE_GOOGLE_CLIENT_ID=${VITE_GOOGLE_CLIENT_ID}
+    container_name: ainotes-frontend
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - ainotes-network
+    depends_on:
+      - ainotes-api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Website Landing Page
+  ainotes-website:
+    build:
+      context: ./website
+      dockerfile: Dockerfile
+    container_name: ainotes-website
+    ports:
+      - "3000:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    networks:
+      - ainotes-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  ainotes-network:
+    name: ainotes-network
+    driver: bridge
