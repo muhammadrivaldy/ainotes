@@ -30,10 +30,12 @@ help:
 	@echo "  make build-frontend       - Build frontend for production"
 	@echo "  make build-website        - Build website for production"
 	@echo ""
-	@echo "Docker (Production):"
-	@echo "  make docker-up            - Start all services with Docker Compose"
+	@echo "Docker:"
+	@echo "  make docker-up            - Start all services (production)"
+	@echo "  make docker-dev           - Start all services (development with hot-reload)"
 	@echo "  make docker-down          - Stop all Docker services"
-	@echo "  make docker-build         - Rebuild all Docker images"
+	@echo "  make docker-build         - Rebuild production images"
+	@echo "  make docker-dev-build     - Rebuild development images"
 	@echo "  make docker-logs          - View logs from all services"
 	@echo ""
 	@echo "Testing:"
@@ -122,7 +124,7 @@ build-website:
 # ==================== Docker ====================
 
 docker-up:
-	@echo "Starting all services with Docker Compose..."
+	@echo "Starting all services with Docker Compose (production)..."
 	@docker-compose up -d
 	@echo ""
 	@echo "Services started!"
@@ -132,9 +134,23 @@ docker-up:
 	@echo ""
 	@echo "View logs: make docker-logs"
 
+docker-dev:
+	@echo "Starting all services with Docker Compose (development)..."
+	@docker-compose -f docker-compose.dev.yml up
+	@echo ""
+	@echo "Services started with hot-reload!"
+	@echo "  - Backend:  http://localhost:8000"
+	@echo "  - Frontend: http://localhost:5173"
+	@echo "  - Website:  http://localhost:4321"
+
+docker-dev-build:
+	@echo "Rebuilding development Docker images..."
+	@docker-compose -f docker-compose.dev.yml build --no-cache
+
 docker-down:
 	@echo "Stopping all Docker services..."
 	@docker-compose down
+	@docker-compose -f docker-compose.dev.yml down
 
 docker-build:
 	@echo "Rebuilding all Docker images..."
