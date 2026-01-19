@@ -10,10 +10,7 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
   - [Without Docker](#without-docker)
   - [With Docker](#with-docker)
 - [Project Structure](#project-structure)
-- [Connecting with Frontend](#connecting-with-frontend)
 - [Configuration](#configuration)
-- [Docker Details](#docker-details)
-- [Troubleshooting](#troubleshooting)
 - [Architecture](#architecture)
 - [License](#license)
 
@@ -41,9 +38,6 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
 - **SlowAPI** - Rate limiting middleware
 
 ## Quick Start
-
-> **Note:** This repository provides the backend API for the AI Notes application.  
-> To use this API with a web interface, connect it to the [ainotes-frontend](https://github.com/muhammadrivaldy/ainotes-frontend) project.
 
 ### Without Docker
 
@@ -131,58 +125,6 @@ ainotes/
 └── README.md                  # This file
 ```
 
-## Connecting with Frontend
-
-This API is designed to work with the AI Notes frontend application.
-
-### Docker Network Setup
-
-The API runs on a Docker network called `ainotes-network`. The frontend container should join the same network to communicate with the API.
-
-**Frontend docker-compose.yml configuration:**
-
-```yaml
-version: '3.8'
-
-services:
-  frontend:
-    # ... your frontend config ...
-    networks:
-      - ainotes-network
-
-networks:
-  ainotes-network:
-    name: ainotes-network
-    driver: bridge
-```
-
-### API Access
-
-- **From host machine:** `http://localhost:8000`
-- **From frontend container:** `http://ainotes-api:8000`
-
-The frontend should use the service name `ainotes-api` as the hostname when making API requests from within Docker.
-
-**Frontend environment variable:**
-
-```env
-VITE_API_URL=http://ainotes-api:8000
-```
-
-### Starting Both Services
-
-```bash
-# Start backend
-cd /path/to/ainotes-api
-docker-compose up -d
-
-# Start frontend
-cd /path/to/ainotes-frontend
-docker-compose up -d
-```
-
-Both containers will communicate through the `ainotes-network` bridge network.
-
 ## Configuration
 
 ### Environment Variables
@@ -193,22 +135,6 @@ Configure the API using the `.env` file:
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
-### Customize Port
-
-Edit `docker-compose.yml`:
-
-```yaml
-ports:
-  - "3000:8000"  # Change 3000 to your desired port
-```
-
-Or for local development, modify `main.py`:
-
-```python
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=3000, reload=True)
-```
-
 ### Rate Limiting
 
 Adjust rate limits in `main.py`:
@@ -217,115 +143,6 @@ Adjust rate limits in `main.py`:
 @app.post("/chat")
 @limiter.limit("10/minute")  # Change from 5 to 10 requests per minute
 async def chat_endpoint(...):
-```
-
-### CORS Configuration
-
-Modify allowed origins in `main.py`:
-
-```python
-origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://yourdomain.com",  # Add your domain
-]
-```
-
-## Docker Details
-
-### Production Setup
-
-- Python 3.11 slim base image
-- Optimized for production workloads
-- Persistent volumes for data storage
-- Health checks included
-- Auto-restart on failure
-- Minimal attack surface
-
-### Data Persistence
-
-The Docker setup persists:
-
-- `db_chroma/` - Vector embeddings storage (ChromaDB)
-- `chat_history.db` - SQLite database for chat history
-
-These are mounted as volumes and survive container restarts.
-
-## Troubleshooting
-
-### Port Already in Use
-
-Change the port mapping in `docker-compose.yml` or use a different port when running locally.
-
-### OpenRouter API Key Issues
-
-Ensure your `.env` file has a valid `OPENROUTER_API_KEY`:
-
-```bash
-# Check if .env exists
-cat .env
-
-# Should show:
-OPENROUTER_API_KEY=sk-or-v1-...
-```
-
-### Database Locked Error
-
-If SQLite shows database locked error:
-
-```bash
-# Stop the container
-docker-compose down
-
-# Remove the database file
-rm chat_history.db
-
-# Restart
-docker-compose up -d
-```
-
-### ChromaDB Collection Issues
-
-If vector store has issues:
-
-```bash
-# Using Makefile
-make clean-db
-
-# Or manually remove ChromaDB
-rm -rf db_chroma/
-```
-
-### Container Won't Start
-
-Check the logs:
-
-```bash
-docker-compose logs -f
-```
-
-### Changes Not Reflecting (Local Development)
-
-```bash
-# Restart with reload
-make dev
-
-# Or force rebuild with Docker
-docker-compose down
-docker-compose up -d --build
-```
-
-### Dependencies Issues
-
-```bash
-# Clear and reinstall
-make clean-all
-make install
-
-# Or with Docker, rebuild
-docker-compose down
-docker-compose build --no-cache
-docker-compose up -d
 ```
 
 ## Architecture
