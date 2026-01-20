@@ -64,9 +64,6 @@ export default function MessageBubble({ message, isStreaming = false }) {
       >
         <div className="prose prose-sm dark:prose-invert wrap-break-words max-w-none">
           <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{displayContent}</ReactMarkdown>
-          {isStreaming && !isUser && !isComplete && (
-            <span className="ml-1 inline-block h-4 w-0.5 animate-pulse bg-gray-800 dark:bg-gray-100" />
-          )}
         </div>
       </div>
 
