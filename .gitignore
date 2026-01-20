@@ -99,7 +99,6 @@ lerna-debug.log*
 # -------------------- IDE and Editor Files --------------------
 
 # VS Code
-.vscode/*
 !.vscode/extensions.json
 
 # IntelliJ IDEA
