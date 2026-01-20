@@ -27,7 +27,7 @@ ainotes/
 ```bash
 # 1. Setup environment variables
 cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env.development
+cp frontend/.env.example frontend/.env
 # Edit both .env files with your API keys
 
 # 2. Run with Docker (recommended)
