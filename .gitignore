@@ -38,7 +38,7 @@ coverage.xml
 # Pytest cache
 .pytest_cache/
 
-# -------------------- Node.js (Frontend & Website) --------------------
+# -------------------- Node.js (Frontend & Landing) --------------------
 
 # Dependencies
 node_modules/

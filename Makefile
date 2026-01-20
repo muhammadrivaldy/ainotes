@@ -1,7 +1,7 @@
-.PHONY: help install install-backend install-frontend install-website \
-	dev dev-backend dev-frontend dev-website dev-all \
-	build build-backend build-frontend build-website build-all \
-	clean clean-backend clean-frontend clean-website clean-all \
+.PHONY: help install install-backend install-frontend install-landing \
+	dev dev-backend dev-frontend dev-landing dev-all \
+	build build-backend build-frontend build-landing build-all \
+	clean clean-backend clean-frontend clean-landing clean-all \
 	test test-backend test-frontend test-all \
 	docker-up docker-down docker-build docker-logs \
 	check-backend status
@@ -16,19 +16,19 @@ help:
 	@echo "  make install              - Install all components"
 	@echo "  make install-backend      - Install backend dependencies"
 	@echo "  make install-frontend     - Install frontend dependencies"
-	@echo "  make install-website      - Install website dependencies"
+	@echo "  make install-landing      - Install landing dependencies"
 	@echo ""
 	@echo "Development (Local):"
 	@echo "  make dev-all              - Start all services (requires 3 terminals)"
 	@echo "  make dev-backend          - Start backend server (port 8000)"
 	@echo "  make dev-frontend         - Start frontend dev server (port 5173)"
-	@echo "  make dev-website          - Start website dev server (port 4321)"
+	@echo "  make dev-landing          - Start landing dev server (port 4321)"
 	@echo ""
 	@echo "Build:"
 	@echo "  make build-all            - Build all components for production"
 	@echo "  make build-backend        - Build backend Docker image"
 	@echo "  make build-frontend       - Build frontend for production"
-	@echo "  make build-website        - Build website for production"
+	@echo "  make build-landing        - Build landing for production"
 	@echo ""
 	@echo "Docker:"
 	@echo "  make docker-up            - Start all services (production)"
@@ -47,7 +47,7 @@ help:
 	@echo "  make clean-all            - Clean all build artifacts"
 	@echo "  make clean-backend        - Clean backend cache and databases"
 	@echo "  make clean-frontend       - Clean frontend build artifacts"
-	@echo "  make clean-website        - Clean website build artifacts"
+	@echo "  make clean-landing        - Clean landing build artifacts"
 	@echo ""
 	@echo "Utilities:"
 	@echo "  make check-backend        - Verify backend is running"
@@ -56,7 +56,7 @@ help:
 
 # ==================== Installation ====================
 
-install: install-backend install-frontend install-website
+install: install-backend install-frontend install-landing
 	@echo "✓ All components installed successfully!"
 
 install-backend:
@@ -67,9 +67,9 @@ install-frontend:
 	@echo "Installing frontend dependencies..."
 	@cd frontend && $(MAKE) install
 
-install-website:
-	@echo "Installing website dependencies..."
-	@cd website && npm install
+install-landing:
+	@echo "Installing landing dependencies..."
+	@cd landing && npm install
 
 # ==================== Development ====================
 
@@ -82,14 +82,14 @@ dev-all:
 	@echo ""
 	@echo "Terminal 1:  make dev-backend"
 	@echo "Terminal 2:  make dev-frontend"
-	@echo "Terminal 3:  make dev-website"
+	@echo "Terminal 3:  make dev-landing"
 	@echo ""
 	@echo "Or use a terminal multiplexer like tmux or screen."
 	@echo ""
 	@echo "Access points:"
 	@echo "  - Backend:  http://localhost:8000"
 	@echo "  - Frontend: http://localhost:5173"
-	@echo "  - Website:  http://localhost:4321"
+	@echo "  - Landing:  http://localhost:4321"
 	@echo ""
 
 dev-backend:
@@ -100,13 +100,13 @@ dev-frontend:
 	@echo "Starting frontend dev server on port 5173..."
 	@cd frontend && $(MAKE) dev
 
-dev-website:
-	@echo "Starting website dev server on port 4321..."
-	@cd website && npm run dev
+dev-landing:
+	@echo "Starting landing dev server on port 4321..."
+	@cd landing && npm run dev
 
 # ==================== Build ====================
 
-build-all: build-backend build-frontend build-website
+build-all: build-backend build-frontend build-landing
 	@echo "✓ All components built successfully!"
 
 build-backend:
@@ -117,9 +117,9 @@ build-frontend:
 	@echo "Building frontend..."
 	@cd frontend && $(MAKE) build
 
-build-website:
-	@echo "Building website..."
-	@cd website && npm run build
+build-landing:
+	@echo "Building landing..."
+	@cd landing && npm run build
 
 # ==================== Docker ====================
 
@@ -130,7 +130,7 @@ docker-up:
 	@echo "Services started!"
 	@echo "  - Backend:  http://localhost:8000"
 	@echo "  - Frontend: http://localhost:8080"
-	@echo "  - Website:  http://localhost:3000"
+	@echo "  - Landing:  http://localhost:3000"
 	@echo ""
 	@echo "View logs: make docker-logs"
 
@@ -141,7 +141,7 @@ docker-dev:
 	@echo "Services started with hot-reload!"
 	@echo "  - Backend:  http://localhost:8000"
 	@echo "  - Frontend: http://localhost:5173"
-	@echo "  - Website:  http://localhost:4321"
+	@echo "  - Landing:  http://localhost:4321"
 
 docker-dev-build:
 	@echo "Rebuilding development Docker images..."
@@ -175,7 +175,7 @@ test-frontend:
 
 # ==================== Cleanup ====================
 
-clean-all: clean-backend clean-frontend clean-website
+clean-all: clean-backend clean-frontend clean-landing
 	@echo "✓ All components cleaned!"
 
 clean-backend:
@@ -186,9 +186,9 @@ clean-frontend:
 	@echo "Cleaning frontend..."
 	@cd frontend && $(MAKE) clean-all
 
-clean-website:
-	@echo "Cleaning website..."
-	@cd website && rm -rf dist node_modules .astro
+clean-landing:
+	@echo "Cleaning landing..."
+	@cd landing && rm -rf dist node_modules .astro
 
 # ==================== Utilities ====================
 
@@ -206,7 +206,7 @@ status:
 	@echo "Frontend (port 5173/8080):"
 	@curl -s http://localhost:5173/ > /dev/null && echo "  ✓ Running (dev)" || curl -s http://localhost:8080/ > /dev/null && echo "  ✓ Running (prod)" || echo "  ✗ Not running"
 	@echo ""
-	@echo "Website (port 4321/3000):"
+	@echo "Landing (port 4321/3000):"
 	@curl -s http://localhost:4321/ > /dev/null && echo "  ✓ Running (dev)" || curl -s http://localhost:3000/ > /dev/null && echo "  ✓ Running (prod)" || echo "  ✗ Not running"
 	@echo ""
 	@echo "Docker services:"

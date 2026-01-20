@@ -53,13 +53,13 @@ services:
       timeout: 10s
       retries: 3
 
-  # Website Landing Page
-  ainotes-website:
+  # Landing Page
+  ainotes-landing:
     build:
-      context: ./website
+      context: ./landing
       dockerfile: Dockerfile
       target: production
-    container_name: ainotes-website
+    container_name: ainotes-landing
     ports:
       - "3000:80"
     restart: unless-stopped

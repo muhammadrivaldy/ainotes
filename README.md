@@ -17,7 +17,7 @@ AI-powered "Second Brain" application for storing and retrieving information thr
 ainotes/
 ├── backend/     # FastAPI + LangGraph + ChromaDB
 ├── frontend/    # React 19 + Vite
-├── website/     # Astro landing page
+├── landing/     # Astro landing page
 ```
 
 ## Quick Start
@@ -35,14 +35,14 @@ docker-compose -f docker-compose.dev.yml up
 
 # OR run locally (requires Python 3.11+ and Node.js 20+)
 make install    # Install all dependencies
-make dev-all    # Requires 3 terminals for backend, frontend, website
+make dev-all    # Requires 3 terminals for backend, frontend, landing
 ```
 
 **Access:**
 
 - Backend API: <http://localhost:8000>
 - Frontend: <http://localhost:5173>
-- Website: <http://localhost:4321>
+- Landing: <http://localhost:4321>
 
 ### Production
 
@@ -54,7 +54,7 @@ docker-compose up -d
 
 - Backend API: <http://localhost:8000>
 - Frontend: <http://localhost:8080>
-- Website: <http://localhost:3000>
+- Landing: <http://localhost:3000>
 
 ## Configuration
 
@@ -85,7 +85,7 @@ make status        # Check service status
 
 - [Backend](backend/README.md) - FastAPI, LangChain, ChromaDB
 - [Frontend](frontend/README.md) - React, authentication, UI
-- [Website](website/README.md) - Astro landing page
+- [Landing](landing/README.md) - Astro landing page
 
 ## License
 

@@ -57,18 +57,18 @@ services:
     depends_on:
       - ainotes-api
 
-  # Website Landing Page (Development)
-  ainotes-website:
+  # Landing Page (Development)
+  ainotes-landing:
     build:
-      context: ./website
+      context: ./landing
       dockerfile: Dockerfile
       target: development
-    container_name: ainotes-website-dev
+    container_name: ainotes-landing-dev
     ports:
       - "4321:4321"
     volumes:
       # Mount source code for hot reload
-      - ./website:/app
+      - ./landing:/app
       # Exclude node_modules for performance
       - /app/node_modules
     environment:
