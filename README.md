@@ -9,6 +9,7 @@ AI-powered "Second Brain" application for storing and retrieving information thr
 - [Configuration](#configuration)
 - [Common Commands](#common-commands)
 - [Documentation](#documentation)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Structure
@@ -86,6 +87,10 @@ make status        # Check service status
 - [Backend](backend/README.md) - FastAPI, LangChain, ChromaDB
 - [Frontend](frontend/README.md) - React, authentication, UI
 - [Landing](landing/README.md) - Astro landing page
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started, coding standards, and the pull request process.
 
 ## License
 
