@@ -202,3 +202,37 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
                 return msg.content
 
         return "Sorry, I could not process your request."
+
+    def get_suggestions(self, context: str, k: int = 1, min_similarity: float = 0.7) -> List[dict]:
+        """
+        Fetch related knowledge suggestions based on conversation context.
+
+        Args:
+            context: The conversation context to search against
+            k: Number of suggestions to return
+            min_similarity: Minimum similarity score (0-1) to include suggestion
+
+        Returns:
+            List of suggestion dicts with id, content, and full_content
+        """
+        # Use similarity_search_with_score to get relevance scores
+        results = self.vector_store.similarity_search_with_score(
+            context,
+            k=k,
+            filter={"user_id": self.user_id}
+        )
+
+        # Filter by similarity threshold and format results
+        # Note: ChromaDB returns distance (lower is better), not similarity
+        # Convert distance to similarity: similarity = 1 / (1 + distance)
+        suggestions = []
+        for doc, distance in results:
+            similarity = 1 / (1 + distance)
+            if similarity >= min_similarity:
+                suggestions.append({
+                    "id": str(hash(doc.page_content)),
+                    "content": doc.page_content[:100] + ("..." if len(doc.page_content) > 100 else ""),
+                    "full_content": doc.page_content
+                })
+
+        return suggestions

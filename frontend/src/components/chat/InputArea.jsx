@@ -18,9 +18,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Trash2 } from 'lucide-react';
 
-export default function InputArea({ onSend, onClear, disabled }) {
-  const [input, setInput] = useState('');
+export default function InputArea({ onSend, onClear, disabled, value, onChange }) {
+  const [localInput, setLocalInput] = useState('');
   const textareaRef = useRef(null);
+
+  // Use controlled value if provided, otherwise use local state
+  const input = value !== undefined ? value : localInput;
+  const setInput = onChange || setLocalInput;
 
   const handleSubmit = (e) => {
     e.preventDefault();

@@ -22,13 +22,17 @@ import remarkBreaks from 'remark-breaks';
 import { Bot, User } from 'lucide-react';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useAuth } from '../../context/AuthContext';
+import SuggestionChips from './SuggestionChips';
 
-export default function MessageBubble({ message, isStreaming = false }) {
+export default function MessageBubble({ message, isStreaming = false, suggestions = [], onSuggestionClick }) {
   const { user } = useAuth();
   const isUser = message.role === 'user';
   const { displayedText, isComplete } = useTypewriter(message.content, 20, isStreaming && !isUser);
 
   const contentToDisplay = isStreaming && !isUser ? displayedText : message.content;
+
+  // Show suggestions only for AI messages after typewriter completes
+  const showSuggestions = !isUser && isComplete && suggestions.length > 0;
 
   return (
     <div className={`group mb-6 flex w-full items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -39,14 +43,19 @@ export default function MessageBubble({ message, isStreaming = false }) {
         </div>
       )}
 
-      <div
-        className={`relative max-w-[80%] rounded-2xl p-4 shadow-sm md:max-w-[70%] ${
-          isUser ? 'rounded-br-sm bg-blue-600 text-white' : 'rounded-bl-sm border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
-        }`}
-      >
-        <div className={`prose prose-sm max-w-none break-words ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
-          <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{contentToDisplay}</ReactMarkdown>
+      <div className="flex max-w-[80%] flex-col md:max-w-[70%]">
+        <div
+          className={`relative rounded-2xl p-4 shadow-sm ${
+            isUser ? 'rounded-br-sm bg-blue-600 text-white' : 'rounded-bl-sm border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
+          }`}
+        >
+          <div className={`prose prose-sm max-w-none break-words ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{contentToDisplay}</ReactMarkdown>
+          </div>
         </div>
+
+        {/* Suggestion chips - shown below AI message bubble */}
+        <SuggestionChips suggestions={suggestions} onSuggestionClick={onSuggestionClick} visible={showSuggestions} />
       </div>
 
       {/* User Avatar - Right side */}

@@ -52,8 +52,14 @@ class ChatRequest(BaseModel):
     # but we keep it for backward compatibility or context injection.
     history: List[Message] = []
 
+class Suggestion(BaseModel):
+    id: str
+    content: str       # Truncated for display (100 chars)
+    full_content: str  # Full content for expansion
+
 class ChatResponse(BaseModel):
     response: str
+    suggestions: List[Suggestion] = []
 
 # --- Auth Models ---
 class GoogleAuthRequest(BaseModel):

@@ -24,7 +24,7 @@ from slowapi.errors import RateLimitExceeded
 
 from models import (
     ChatRequest, ChatResponse, ChatMessage, Message,
-    GoogleAuthRequest, AuthResponse, UserResponse, User
+    GoogleAuthRequest, AuthResponse, UserResponse, User, Suggestion
 )
 from database import create_db_and_tables, get_session, get_or_create_user
 from auth import create_access_token, decode_google_token, get_current_user
@@ -184,7 +184,16 @@ async def chat_endpoint(
         session.add(ai_msg)
         session.commit()
 
-        return ChatResponse(response=response_text)
+        # 5. Get related suggestions from knowledge base
+        suggestions = []
+        try:
+            search_context = f"{body.message} {response_text}"
+            suggestion_results = user_brain.get_suggestions(context=search_context, k=1)
+            suggestions = [Suggestion(**s) for s in suggestion_results]
+        except Exception as e:
+            print(f"Warning: Failed to fetch suggestions: {e}")
+
+        return ChatResponse(response=response_text, suggestions=suggestions)
     except Exception as e:
         print(f"Error processing chat: {e}")
         raise HTTPException(status_code=500, detail="An internal error occurred. Please try again later.")
