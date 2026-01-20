@@ -21,7 +21,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { loginWithGoogle } from '../services/api';
-import { BookOpen, Moon, Sun } from 'lucide-react';
+import { Moon, Sun } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -73,9 +73,11 @@ export default function LoginPage() {
       {/* Main Content */}
       <div className="flex flex-1 flex-col items-center justify-center px-4">
         {/* Logo */}
-        <div className="mb-8 flex items-center">
-          <BookOpen className="h-12 w-12 text-blue-600 dark:text-blue-400" />
-          <span className="ml-3 text-3xl font-bold text-gray-900 dark:text-gray-100">AI Notes</span>
+        <div className="mb-8 flex items-center gap-2">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700">
+            <span className="text-lg font-bold text-white">AI</span>
+          </div>
+          <span className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Notes</span>
         </div>
 
         {/* Login Card */}

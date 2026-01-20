@@ -19,7 +19,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import { Settings, User, Moon, Sun, BookOpen, PanelLeftClose, LogOut } from 'lucide-react';
+import { Settings, User, Moon, Sun, PanelLeftClose, LogOut } from 'lucide-react';
 
 export default function Sidebar({ onClose }) {
   const { theme, toggleTheme } = useTheme();
@@ -35,9 +35,11 @@ export default function Sidebar({ onClose }) {
     <aside className="flex h-full w-64 flex-col">
       {/* Header / Logo */}
       <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4 dark:border-gray-800">
-        <div className="flex items-center">
-          <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-          <span className="ml-3 text-lg font-bold text-gray-900 dark:text-gray-100">AI Notes</span>
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700">
+            <span className="text-sm font-bold text-white">AI</span>
+          </div>
+          <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">Notes</span>
         </div>
         <button onClick={onClose} className="rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-200 dark:hover:bg-gray-800" title="Close Sidebar">
           <PanelLeftClose size={20} />

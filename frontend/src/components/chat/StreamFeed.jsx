@@ -26,7 +26,7 @@ export default function StreamFeed({ messages, streamingMessageId }) {
   }, [messages]);
 
   return (
-    <div className="w-full flex-1 overflow-y-auto scroll-smooth px-4 py-8">
+    <div className="w-full flex-1 overflow-y-auto scroll-smooth px-4 pt-8">
       <div className="mx-auto flex min-h-full max-w-4xl flex-col justify-end">
         {messages.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center space-y-4 text-gray-400 dark:text-gray-600">
