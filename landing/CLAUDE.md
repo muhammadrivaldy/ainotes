@@ -25,6 +25,7 @@ This is an open-source landing page template for AI Notes built with **Astro 5.1
 ### Internationalization System
 
 The site supports English (en) and Indonesian (id) using a custom i18n approach:
+
 1. Astro components use `data-i18n` attributes on translatable elements
 2. `src/scripts/i18n.ts` listens for `languageChange` events and updates DOM
 3. `LanguageSwitcher.tsx` (React) handles user language selection and persists to localStorage
