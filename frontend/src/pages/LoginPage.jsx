@@ -74,7 +74,7 @@ export default function LoginPage() {
       <div className="flex flex-1 flex-col items-center justify-center px-4">
         {/* Logo */}
         <div className="mb-8 flex items-center gap-2">
-          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-blue-700">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-blue-600 to-blue-700">
             <span className="text-lg font-bold text-white">AI</span>
           </div>
           <span className="text-3xl font-semibold text-gray-900 dark:text-gray-100">Notes</span>
