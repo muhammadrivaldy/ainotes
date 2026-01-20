@@ -18,65 +18,49 @@
 */
 ---
 
-<section id="demo" class="py-24 bg-white">
+<section id="demo" class="bg-white py-24">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-16">
-      <div class="inline-flex items-center gap-2 bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-sm font-semibold mb-4">
+    <div class="mb-16 text-center">
+      <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-cyan-100 px-3 py-1 text-sm font-semibold text-cyan-700">
         <span data-i18n="demo.badge">The Solution</span>
       </div>
-      <h2 data-i18n="demo.title" class="text-4xl font-bold text-slate-900 sm:text-5xl tracking-tight">
-        How It Works
-      </h2>
-      <p data-i18n="demo.subtitle" class="mt-4 text-xl text-slate-600 max-w-2xl mx-auto">
-        Simple, natural conversation. No complicated interfaces to learn.
-      </p>
+      <h2 data-i18n="demo.title" class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">How It Works</h2>
+      <p data-i18n="demo.subtitle" class="mx-auto mt-4 max-w-2xl text-xl text-slate-600">Simple, natural conversation. No complicated interfaces to learn.</p>
     </div>
 
-    <div class="relative max-w-5xl mx-auto mb-16">
-      <div class="absolute inset-0 bg-gradient-to-tr from-blue-600 to-cyan-600 rounded-3xl blur-3xl opacity-10"></div>
-      <div class="relative aspect-video bg-gradient-to-br from-slate-50 to-slate-100 rounded-3xl shadow-2xl border-2 border-slate-200 flex items-center justify-center overflow-hidden group">
+    <div class="relative mx-auto mb-16 max-w-5xl">
+      <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-blue-600 to-cyan-600 opacity-10 blur-3xl"></div>
+      <div class="group relative flex aspect-video items-center justify-center overflow-hidden rounded-3xl border-2 border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 shadow-2xl">
         <div class="absolute inset-0 bg-gradient-to-tr from-blue-600/5 to-cyan-600/5"></div>
         <div class="relative text-center">
-          <div class="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full shadow-lg mb-4 group-hover:scale-110 transition-transform">
-            <svg class="w-10 h-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          <div class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-lg transition-transform group-hover:scale-110">
+            <svg class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
           </div>
-          <p data-i18n="demo.imagePlaceholder" class="text-slate-500 font-medium">Demo screenshot here</p>
+          <p data-i18n="demo.imagePlaceholder" class="font-medium text-slate-500">Demo screenshot here</p>
         </div>
       </div>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-8 justify-center text-center">
+    <div class="grid justify-center gap-8 text-center md:grid-cols-3">
       <div class="relative">
-        <div class="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 text-white rounded-2xl font-bold text-2xl mb-6 shadow-lg shadow-blue-600/30 mx-auto">
-          1
-        </div>
-        <h3 data-i18n="demo.step1.title" class="text-xl font-bold text-slate-900 mb-3">Tell It</h3>
-        <p data-i18n="demo.step1.description" class="text-slate-600 leading-relaxed">
-          Say what you want to remember in plain language. No forms to fill, no categories to choose.
-        </p>
+        <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 text-2xl font-bold text-white shadow-lg shadow-blue-600/30">1</div>
+        <h3 data-i18n="demo.step1.title" class="mb-3 text-xl font-bold text-slate-900">Tell It</h3>
+        <p data-i18n="demo.step1.description" class="leading-relaxed text-slate-600">Say what you want to remember in plain language. No forms to fill, no categories to choose.</p>
       </div>
 
       <div class="relative">
-        <div class="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 text-white rounded-2xl font-bold text-2xl mb-6 shadow-lg shadow-blue-600/30 mx-auto">
-          2
-        </div>
-        <h3 data-i18n="demo.step2.title" class="text-xl font-bold text-slate-900 mb-3">Ask It</h3>
-        <p data-i18n="demo.step2.description" class="text-slate-600 leading-relaxed">
-          Retrieve information whenever you need it. Just ask naturally and AI Notes finds it instantly.
-        </p>
+        <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 text-2xl font-bold text-white shadow-lg shadow-blue-600/30">2</div>
+        <h3 data-i18n="demo.step2.title" class="mb-3 text-xl font-bold text-slate-900">Ask It</h3>
+        <p data-i18n="demo.step2.description" class="leading-relaxed text-slate-600">Retrieve information whenever you need it. Just ask naturally and AI Notes finds it instantly.</p>
       </div>
 
       <div class="relative">
-        <div class="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-cyan-600 text-white rounded-2xl font-bold text-2xl mb-6 shadow-lg shadow-blue-600/30 mx-auto">
-          3
-        </div>
-        <h3 data-i18n="demo.step3.title" class="text-xl font-bold text-slate-900 mb-3">Update It</h3>
-        <p data-i18n="demo.step3.description" class="text-slate-600 leading-relaxed">
-          Change or correct information anytime by simply telling AI Notes what to update.
-        </p>
+        <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 text-2xl font-bold text-white shadow-lg shadow-blue-600/30">3</div>
+        <h3 data-i18n="demo.step3.title" class="mb-3 text-xl font-bold text-slate-900">Update It</h3>
+        <p data-i18n="demo.step3.description" class="leading-relaxed text-slate-600">Change or correct information anytime by simply telling AI Notes what to update.</p>
       </div>
     </div>
   </div>

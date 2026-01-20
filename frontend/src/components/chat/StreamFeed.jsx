@@ -36,9 +36,7 @@ export default function StreamFeed({ messages, streamingMessageId }) {
             <p className="text-lg font-medium">Start your note stream...</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <MessageBubble key={msg.id} message={msg} isStreaming={msg.id === streamingMessageId} />
-          ))
+          messages.map((msg) => <MessageBubble key={msg.id} message={msg} isStreaming={msg.id === streamingMessageId} />)
         )}
         <div ref={bottomRef} />
       </div>

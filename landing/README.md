@@ -25,21 +25,21 @@ This is an open-source project released under the GPL v3 license. You are free t
 
 1. Install dependencies:
 
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 
 2. Start the development server:
 
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   npm run dev
+   ```
 
 3. Open your browser and visit
 
-    ```text
-    http://localhost:3000
-    ```
+   ```text
+   http://localhost:3000
+   ```
 
 ### Build for Production
 

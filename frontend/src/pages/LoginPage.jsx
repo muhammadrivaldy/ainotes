@@ -65,10 +65,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-900">
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4">
-        <button
-          onClick={toggleTheme}
-          className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800"
-        >
+        <button onClick={toggleTheme} className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-200 dark:text-gray-400 dark:hover:bg-gray-800">
           {theme === 'dark' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
         </button>
       </div>
@@ -83,45 +80,23 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg dark:bg-gray-800">
-          <h1 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
-            Welcome Back
-          </h1>
-          <p className="mb-8 text-center text-gray-600 dark:text-gray-400">
-            Sign in to access your notes
-          </p>
+          <h1 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">Welcome Back</h1>
+          <p className="mb-8 text-center text-gray-600 dark:text-gray-400">Sign in to access your notes</p>
 
           {/* Error Message */}
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-50 p-3 text-center text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
-              {error}
-            </div>
-          )}
+          {error && <div className="mb-4 rounded-lg bg-red-50 p-3 text-center text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">{error}</div>}
 
           {/* Loading State */}
-          {isLoading && (
-            <div className="mb-4 text-center text-gray-600 dark:text-gray-400">
-              Signing in...
-            </div>
-          )}
+          {isLoading && <div className="mb-4 text-center text-gray-600 dark:text-gray-400">Signing in...</div>}
 
           {/* Google Sign-In Button */}
           <div className="flex justify-center">
-            <GoogleLogin
-              onSuccess={handleSuccess}
-              onError={handleError}
-              theme={theme === 'dark' ? 'filled_black' : 'outline'}
-              size="large"
-              shape="rectangular"
-              text="signin_with"
-              width="300"
-            />
+            <GoogleLogin onSuccess={handleSuccess} onError={handleError} theme={theme === 'dark' ? 'filled_black' : 'outline'} size="large" shape="rectangular" text="signin_with" width="300" />
           </div>
         </div>
 
         {/* Footer */}
-        <p className="mt-8 text-sm text-gray-500 dark:text-gray-400">
-          Your second brain for notes and ideas
-        </p>
+        <p className="mt-8 text-sm text-gray-500 dark:text-gray-400">Your second brain for notes and ideas</p>
       </div>
     </div>
   );

@@ -58,11 +58,7 @@ export function AuthProvider({ children }) {
 
   const isAuthenticated = !!user && !!getToken();
 
-  return (
-    <AuthContext.Provider value={{ user, loading, isAuthenticated, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, loading, isAuthenticated, login, logout }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

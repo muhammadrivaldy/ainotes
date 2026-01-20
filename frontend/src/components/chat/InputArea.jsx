@@ -51,12 +51,7 @@ export default function InputArea({ onSend, onClear, disabled }) {
     <div className="mx-auto w-full max-w-4xl p-4 pb-6">
       <div className="relative flex items-center gap-2 rounded-3xl border border-gray-200 bg-white p-2 shadow-lg transition-colors dark:border-gray-700 dark:bg-gray-800">
         {/* Clear Button */}
-        <button
-          type="button"
-          onClick={onClear}
-          className="rounded-full p-3 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
-          title="Clear conversation"
-        >
+        <button type="button" onClick={onClear} className="rounded-full p-3 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20" title="Clear conversation">
           <Trash2 size={20} />
         </button>
 
@@ -77,18 +72,14 @@ export default function InputArea({ onSend, onClear, disabled }) {
           onClick={handleSubmit}
           disabled={!input.trim() || disabled}
           className={`rounded-full p-3 transition-all duration-200 ${
-            input.trim() && !disabled
-              ? 'bg-blue-600 text-white shadow-md hover:bg-blue-700'
-              : 'cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-gray-700'
+            input.trim() && !disabled ? 'bg-blue-600 text-white shadow-md hover:bg-blue-700' : 'cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-gray-700'
           }`}
         >
           <Send size={20} />
         </button>
       </div>
       <div className="mt-2 text-center">
-        <p className="text-xs text-gray-400 dark:text-gray-500">
-          AI Notes can make mistakes. Verify important information.
-        </p>
+        <p className="text-xs text-gray-400 dark:text-gray-500">AI Notes can make mistakes. Verify important information.</p>
       </div>
     </div>
   );

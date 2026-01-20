@@ -20,7 +20,7 @@ import { translations, type Language } from '../lib/translations';
 
 function getCurrentLanguage(): Language {
   const saved = localStorage.getItem('language') as Language;
-  return (saved === 'en' || saved === 'id') ? saved : 'en';
+  return saved === 'en' || saved === 'id' ? saved : 'en';
 }
 
 function updatePageContent(lang: Language) {

@@ -24,9 +24,7 @@ export default function AppLayout({ children }) {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-white text-gray-900 transition-colors duration-200 dark:bg-gray-900 dark:text-gray-100">
-      <div
-        className={`${isSidebarOpen ? 'w-64' : 'w-0'} shrink-0 overflow-hidden border-r border-gray-200 bg-gray-50 transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-950`}
-      >
+      <div className={`${isSidebarOpen ? 'w-64' : 'w-0'} shrink-0 overflow-hidden border-r border-gray-200 bg-gray-50 transition-all duration-300 ease-in-out dark:border-gray-800 dark:bg-gray-950`}>
         <Sidebar onClose={() => setIsSidebarOpen(false)} />
       </div>
 

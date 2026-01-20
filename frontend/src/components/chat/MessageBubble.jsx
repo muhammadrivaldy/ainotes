@@ -45,9 +45,7 @@ export default function MessageBubble({ message, isStreaming = false }) {
   }, [contentToDisplay]);
 
   return (
-    <div
-      className={`group mb-6 flex w-full items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
-    >
+    <div className={`group mb-6 flex w-full items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
       {/* AI Avatar - Left side */}
       {!isUser && (
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-purple-500 to-indigo-600 shadow-sm">
@@ -57,9 +55,7 @@ export default function MessageBubble({ message, isStreaming = false }) {
 
       <div
         className={`relative max-w-[80%] rounded-2xl p-4 shadow-sm md:max-w-[70%] ${
-          isUser
-            ? 'rounded-br-sm bg-blue-600 text-white'
-            : 'rounded-bl-sm border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
+          isUser ? 'rounded-br-sm bg-blue-600 text-white' : 'rounded-bl-sm border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
         }`}
       >
         <div className="prose prose-sm dark:prose-invert wrap-break-words max-w-none">
@@ -71,12 +67,7 @@ export default function MessageBubble({ message, isStreaming = false }) {
       {isUser && (
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-sm">
           {user?.picture ? (
-            <img
-              src={user.picture}
-              alt={user.name || 'User'}
-              referrerPolicy="no-referrer"
-              className="h-12 w-12 rounded-full object-cover"
-            />
+            <img src={user.picture} alt={user.name || 'User'} referrerPolicy="no-referrer" className="h-12 w-12 rounded-full object-cover" />
           ) : (
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-blue-700">
               <User className="h-5 w-5 text-white" />
