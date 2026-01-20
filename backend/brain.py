@@ -58,8 +58,8 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
     def __init__(self):
         # Using OpenRouter for Embeddings (if supported) or you might want to switch to HuggingFaceEmbeddings for local
         self.embeddings = OpenAIEmbeddings(
-            model="text-embedding-3-small", 
-            openai_api_base="https://openrouter.ai/api/v1",
+            model=os.getenv("OPENROUTER_EMBEDDING_MODEL", "text-embedding-3-small"),
+            openai_api_base=os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1"),
             openai_api_key=os.getenv("OPENROUTER_API_KEY")
         )
         
@@ -72,9 +72,9 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
 
         # Using OpenRouter for Chat
         self.llm = ChatOpenAI(
-            model="openai/gpt-4o-mini",
+            model=os.getenv("OPENROUTER_AI_MODEL", "openai/gpt-4o-mini"),
             temperature=0,
-            openai_api_base="https://openrouter.ai/api/v1",
+            openai_api_base=os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1"),
             openai_api_key=os.getenv("OPENROUTER_API_KEY")
         )
         
@@ -86,6 +86,7 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
             Use this when the user makes a statement, shares a fact, or asks to save something.
             """
             self.vector_store.add_texts(texts=[content])
+            self.vector_store.persist()
             return "Information stored successfully."
 
         @tool
