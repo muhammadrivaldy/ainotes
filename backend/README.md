@@ -11,7 +11,6 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
   - [With Docker](#with-docker)
 - [Project Structure](#project-structure)
 - [Configuration](#configuration)
-- [Architecture](#architecture)
 - [License](#license)
 
 ## Features
@@ -144,25 +143,6 @@ Adjust rate limits in `main.py`:
 @limiter.limit("10/minute")  # Change from 5 to 10 requests per minute
 async def chat_endpoint(...):
 ```
-
-## Architecture
-
-### Agent Flow
-
-1. **User Message** → FastAPI endpoint
-2. **Security Check** → Forbidden phrase filtering
-3. **History Retrieval** → Load from SQLite
-4. **LangGraph Agent** → Process with tools
-5. **Tool Execution** → add_recall / query_recall / delete_recall
-6. **Response Generation** → LLM generates reply
-7. **Save to History** → Store in SQLite
-8. **Return Response** → Send to user
-
-### Tools
-
-- **add_recall** - Stores information in vector database
-- **query_recall** - Retrieves information via semantic search
-- **delete_recall** - Removes information by similarity match
 
 ## License
 
