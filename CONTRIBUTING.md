@@ -87,7 +87,6 @@ ainotes/
 │   ├── models.py         # Database models
 │   ├── database.py       # Database setup
 │   └── requirements.txt  # Python dependencies
-│
 ├── frontend/      # React 19 + Vite + Tailwind CSS
 │   ├── src/
 │   │   ├── components/   # UI components
@@ -96,7 +95,6 @@ ainotes/
 │   │   ├── hooks/        # Custom React hooks
 │   │   └── services/     # API services
 │   └── package.json
-│
 └── landing/       # Astro landing page
     ├── src/
     │   ├── components/   # Astro components
