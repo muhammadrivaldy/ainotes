@@ -1,3 +1,22 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 @variant dark (&:where(.dark, .dark *));
+
+/* Reduce spacing around code blocks */
+.prose {
+  :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0.75em;
+    margin-bottom: 0.75em;
+  }
+
+  /* Remove top margin from first child */
+  :where(:first-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-top: 0;
+  }
+
+  /* Remove bottom margin from last child */
+  :where(:last-child):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    margin-bottom: 0;
+  }
+}

@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React, { useMemo } from 'react';
+import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -29,20 +29,6 @@ export default function MessageBubble({ message, isStreaming = false }) {
   const { displayedText, isComplete } = useTypewriter(message.content, 20, isStreaming && !isUser);
 
   const contentToDisplay = isStreaming && !isUser ? displayedText : message.content;
-
-  const displayContent = useMemo(() => {
-    const safeSplitParts = contentToDisplay.split(/(```[\s\S]*?```)/g);
-
-    return safeSplitParts
-      .map((part) => {
-        if (part.startsWith('```')) return part;
-
-        return part.replace(/\n{2,}/g, (match) => {
-          return '\n&nbsp;\n'.repeat(match.length - 1);
-        });
-      })
-      .join('');
-  }, [contentToDisplay]);
 
   return (
     <div className={`group mb-6 flex w-full items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -58,8 +44,8 @@ export default function MessageBubble({ message, isStreaming = false }) {
           isUser ? 'rounded-br-sm bg-blue-600 text-white' : 'rounded-bl-sm border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
         }`}
       >
-        <div className="prose prose-sm dark:prose-invert wrap-break-words max-w-none">
-          <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{displayContent}</ReactMarkdown>
+        <div className={`prose prose-sm max-w-none break-words ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
+          <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{contentToDisplay}</ReactMarkdown>
         </div>
       </div>
 
