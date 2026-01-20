@@ -52,7 +52,6 @@ There are many ways to contribute to AI Notes:
    ```
 
 3. **Get required API keys**
-
    - **OpenRouter API Key**: Get from [OpenRouter](https://openrouter.ai/) and add to `backend/.env`
    - **Google OAuth Client ID**: Get from [Google Cloud Console](https://console.cloud.google.com/apis/credentials) and add to `frontend/.env`
      - Add `http://localhost:5173` as an authorized origin
@@ -60,21 +59,22 @@ There are many ways to contribute to AI Notes:
 4. **Install dependencies and run**
 
    **Option A: Docker (Recommended)**
+
    ```bash
    docker-compose -f docker-compose.dev.yml up
    ```
 
    **Option B: Local development**
+
    ```bash
    make install    # Install all dependencies
    make dev-all    # Start all dev servers (requires 3 terminals)
    ```
 
 5. **Access the application**
-
-   - Backend API: http://localhost:8000
-   - Frontend: http://localhost:5173
-   - Landing page: http://localhost:4321
+   - Backend API: <http://localhost:8000>
+   - Frontend: <http://localhost:5173>
+   - Landing page: <http://localhost:4321>
 
 ## Project Structure
 
@@ -118,7 +118,6 @@ Each directory has its own `CLAUDE.md` and `README.md` with detailed documentati
    ```
 
 2. **Make your changes**
-
    - Write clean, readable code
    - Follow the existing code style
    - Add comments where necessary
@@ -198,7 +197,6 @@ Each directory has its own `CLAUDE.md` and `README.md` with detailed documentati
    ```
 
 2. **Create a Pull Request**
-
    - Go to the [AI Notes repository](https://github.com/muhammadrivaldy/ainotes)
    - Click "New Pull Request"
    - Select your fork and branch
@@ -209,7 +207,6 @@ Each directory has its own `CLAUDE.md` and `README.md` with detailed documentati
      - Testing performed
 
 3. **Wait for review**
-
    - Maintainers will review your PR
    - Address any feedback or requested changes
    - Once approved, your PR will be merged
