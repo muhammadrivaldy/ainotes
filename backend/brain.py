@@ -15,14 +15,11 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
-import shutil
 from typing import List, Literal, TypedDict, Annotated
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain.tools import tool
-from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, BaseMessage
-from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, END, START
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode
@@ -30,8 +27,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# persist_directory
-DB_DIR = os.path.join(os.path.dirname(__file__), "db_chroma")
+# Database directory - now in database/ folder
+DATABASE_DIR = os.path.join(os.path.dirname(__file__), "database")
+CHROMA_DIR = os.path.join(DATABASE_DIR, "chroma")
+os.makedirs(CHROMA_DIR, exist_ok=True)
 
 # Define Graph State
 class AgentState(TypedDict):
@@ -55,19 +54,22 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
 "I don't have that information right now, maybe you can elaborate more about that with me."
 """
 
-    def __init__(self):
-        # Using OpenRouter for Embeddings (if supported) or you might want to switch to HuggingFaceEmbeddings for local
+    def __init__(self, user_id: int):
+        self.user_id = user_id
+
+        # Using OpenRouter for Embeddings
         self.embeddings = OpenAIEmbeddings(
             model=os.getenv("OPENROUTER_EMBEDDING_MODEL", "text-embedding-3-small"),
             openai_api_base=os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1"),
             openai_api_key=os.getenv("OPENROUTER_API_KEY")
         )
-        
-        # Initialize ChromaDB for persistence
+
+        # Single ChromaDB collection for all users
+        # Data isolation is handled via metadata filtering
         self.vector_store = Chroma(
             collection_name="second_brain",
             embedding_function=self.embeddings,
-            persist_directory=DB_DIR
+            persist_directory=CHROMA_DIR
         )
 
         # Using OpenRouter for Chat
@@ -77,16 +79,22 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
             openai_api_base=os.getenv("OPENROUTER_API_BASE", "https://openrouter.ai/api/v1"),
             openai_api_key=os.getenv("OPENROUTER_API_KEY")
         )
-        
-        # Define Tools
+
+        # Define Tools - capture vector_store and user_id for data isolation
+        vector_store = self.vector_store
+        user_id = self.user_id
+
         @tool
         def add_recall(content: str) -> str:
             """
             Useful for storing new information, facts, notes, or memories into the second brain.
             Use this when the user makes a statement, shares a fact, or asks to save something.
             """
-            self.vector_store.add_texts(texts=[content])
-            self.vector_store.persist()
+            # Add metadata with user_id for data isolation
+            vector_store.add_texts(
+                texts=[content],
+                metadatas=[{"user_id": user_id}]
+            )
             return "Information stored successfully."
 
         @tool
@@ -95,7 +103,12 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
             Useful for retrieving information from the second brain.
             Use this when the user asks a personal question or tries to recall a fact.
             """
-            results = self.vector_store.similarity_search(query, k=3)
+            # Filter by user_id to only retrieve current user's data
+            results = vector_store.similarity_search(
+                query,
+                k=3,
+                filter={"user_id": user_id}
+            )
             if not results:
                 return "I don't have that information right now, maybe you can elaborate more about that with me."
             return "\n\n".join([doc.page_content for doc in results])
@@ -106,15 +119,19 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
             Delete information from the second brain by describing what to remove.
             Use this when the user wants to delete, remove, or forget previously stored information.
             """
-            # Find the most similar document
-            results = self.vector_store.similarity_search(content, k=1)
+            # Find the most similar document in current user's data only
+            results = vector_store.similarity_search(
+                content,
+                k=1,
+                filter={"user_id": user_id}
+            )
 
             if not results:
                 return "No matching information found to delete."
 
             doc = results[0]
             # Delete by document ID
-            self.vector_store.delete(ids=[doc.id])
+            vector_store.delete(ids=[doc.id])
 
             return f"Deleted: {doc.page_content[:100]}{'...' if len(doc.page_content) > 100 else ''}"
 
@@ -123,7 +140,7 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
 
         # Build Graph
         workflow = StateGraph(AgentState)
-        
+
         # Add Nodes
         workflow.add_node("agent", self.call_model)
         workflow.add_node("tools", ToolNode(self.tools))
@@ -139,28 +156,17 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
         messages = state["messages"]
 
         # Include all message types: system, human, ai, and tool
-        # OpenAI requires tool messages to follow assistant messages with tool_calls
         filtered_messages = []
         for msg in messages:
-            # Include system, user, assistant, and tool messages
-            # Note: LangChain uses 'human' for user, 'ai' for assistant, 'tool' for tool responses
             if hasattr(msg, 'type') and msg.type in ('system', 'human', 'ai', 'tool'):
                 filtered_messages.append(msg)
-            # Also check for 'role' attribute primarily for legacy/dict messages
             elif getattr(msg, 'role', None) in ('system', 'user', 'assistant', 'tool'):
                 filtered_messages.append(msg)
-        
+
         # Add system prompt if it's the first message or if context is missing
         if not filtered_messages or (filtered_messages[0].type != "system"):
             system_prompt = SystemMessage(content=self.SYSTEM_PROMPT)
             filtered_messages = [system_prompt] + filtered_messages
-        
-        # Ensure the last message is from the user
-        if filtered_messages and filtered_messages[-1].type == 'ai':
-             # If last message was AI, we might not have appended the new user message correctly?
-             # But process_message appends it to 'chat_history' before invoking.
-             # Let's verify what we are sending.
-             pass
 
         response = self.llm_with_tools.invoke(filtered_messages)
         return {"messages": [response]}
@@ -171,7 +177,6 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
         if last_message.tool_calls:
             return "tools"
         return "__end__"
-
 
     def process_message(self, message: str, history: List) -> str:
         forbidden_phrases = [
@@ -197,6 +202,3 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
                 return msg.content
 
         return "Sorry, I could not process your request."
-
-# Global instance
-brain = SecondBrain()

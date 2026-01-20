@@ -14,9 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from sqlmodel import SQLModel, create_engine, Session
+import os
+from sqlmodel import SQLModel, create_engine, Session, select
+from models import User
 
-sqlite_file_name = "chat_history.db"
+# Database path - now in database/ folder
+DATABASE_DIR = os.path.join(os.path.dirname(__file__), "database")
+os.makedirs(DATABASE_DIR, exist_ok=True)
+
+sqlite_file_name = os.path.join(DATABASE_DIR, "chat_history.db")
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
 connect_args = {"check_same_thread": False}
@@ -28,3 +34,40 @@ def create_db_and_tables():
 def get_session():
     with Session(engine) as session:
         yield session
+
+# --- User Functions ---
+def get_user_by_google_id(session: Session, google_id: str) -> User | None:
+    """Get a user by their Google ID."""
+    statement = select(User).where(User.google_id == google_id)
+    return session.exec(statement).first()
+
+def create_user(session: Session, google_id: str, email: str, name: str, picture: str | None = None) -> User:
+    """Create a new user."""
+    user = User(
+        google_id=google_id,
+        email=email,
+        name=name,
+        picture=picture
+    )
+    session.add(user)
+    session.commit()
+    session.refresh(user)
+    return user
+
+def get_or_create_user(session: Session, google_id: str, email: str, name: str, picture: str | None = None) -> User:
+    """Get an existing user or create a new one."""
+    user = get_user_by_google_id(session, google_id)
+    if user:
+        # Update user info in case it changed
+        user.email = email
+        user.name = name
+        user.picture = picture
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user
+    return create_user(session, google_id, email, name, picture)
+
+def get_user_by_id(session: Session, user_id: int) -> User | None:
+    """Get a user by their ID."""
+    return session.get(User, user_id)

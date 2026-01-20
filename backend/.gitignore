@@ -3,7 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# SQLite database files
+# Database folder (contains SQLite and ChromaDB)
+database/*
+!database/.gitkeep
+
+# Legacy database files (if any remain)
 *.sqlite3
 db_chroma/
 chat_history.db

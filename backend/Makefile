@@ -44,8 +44,8 @@ clean:
 # Clean database files
 clean-db:
 	@echo "Removing database files..."
-	rm -rf db_chroma/
-	rm -f chat_history.db
+	rm -rf database/chroma/
+	rm -f database/chat_history.db
 	@echo "Database files removed!"
 
 # Clean everything including venv

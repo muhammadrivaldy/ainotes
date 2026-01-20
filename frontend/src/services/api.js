@@ -19,6 +19,97 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+// Token management
+const TOKEN_KEY = 'auth_token';
+
+export const getToken = () => localStorage.getItem(TOKEN_KEY);
+export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
+export const removeToken = () => localStorage.removeItem(TOKEN_KEY);
+
+/**
+ * Get authorization headers with JWT token
+ * @returns {Object} Headers object with Authorization if token exists
+ */
+const getAuthHeaders = () => {
+  const token = getToken();
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+};
+
+/**
+ * Handle API response and check for auth errors
+ * @param {Response} response - Fetch response object
+ * @returns {Promise<any>} - Parsed response data
+ */
+const handleResponse = async (response) => {
+  if (response.status === 401) {
+    // Token expired or invalid - clear auth state
+    removeToken();
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+    throw new Error('Session expired. Please login again.');
+  }
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Request failed');
+  }
+
+  return response.json();
+};
+
+/**
+ * Authenticate with Google OAuth credential
+ * @param {string} credential - Google OAuth credential token
+ * @returns {Promise<{access_token: string, user: object}>}
+ */
+export const loginWithGoogle = async (credential) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/google`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ credential }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.detail || 'Authentication failed');
+    }
+
+    const data = await response.json();
+    setToken(data.access_token);
+    return data;
+  } catch (error) {
+    console.error('Error during Google authentication:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get current authenticated user info
+ * @returns {Promise<object>} - User object
+ */
+export const getCurrentUser = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    console.error('Error fetching current user:', error);
+    throw error;
+  }
+};
+
 /**
  * Send a message to the AI assistant
  * @param {string} message - The user's message
@@ -28,21 +119,14 @@ export const sendMessage = async (message) => {
   try {
     const response = await fetch(`${API_BASE_URL}/chat`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify({
         message: message,
         history: [], // Backend tracks history in database
       }),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Failed to send message');
-    }
-
-    return await response.json();
+    return handleResponse(response);
   } catch (error) {
     console.error('Error sending message:', error);
     throw error;
@@ -57,17 +141,10 @@ export const getChatHistory = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/history`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Failed to fetch history');
-    }
-
-    return await response.json();
+    return handleResponse(response);
   } catch (error) {
     console.error('Error fetching history:', error);
     throw error;
@@ -82,17 +159,10 @@ export const clearChatHistory = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/history`, {
       method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: getAuthHeaders(),
     });
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Failed to clear history');
-    }
-
-    return await response.json();
+    return handleResponse(response);
   } catch (error) {
     console.error('Error clearing history:', error);
     throw error;
@@ -121,4 +191,12 @@ export const checkHealth = async () => {
     console.error('Error checking health:', error);
     throw error;
   }
+};
+
+/**
+ * Logout - clear all auth data
+ */
+export const logout = () => {
+  removeToken();
+  localStorage.removeItem('user');
 };

@@ -15,36 +15,50 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { loginWithGoogle } from '../services/api';
 import { BookOpen, Moon, Sun } from 'lucide-react';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSuccess = (credentialResponse) => {
+  const handleSuccess = async (credentialResponse) => {
+    setError(null);
+    setIsLoading(true);
+
     try {
-      const decoded = jwtDecode(credentialResponse.credential);
+      // Authenticate with backend
+      const authData = await loginWithGoogle(credentialResponse.credential);
+
+      // Store user data from backend response
       const userData = {
-        name: decoded.name,
-        email: decoded.email,
-        picture: decoded.picture,
+        id: authData.user.id,
+        name: authData.user.name,
+        email: authData.user.email,
+        picture: authData.user.picture,
       };
+
       login(userData);
       navigate('/');
     } catch (err) {
-      console.error('Failed to decode credential:', err);
+      console.error('Failed to authenticate:', err);
+      setError(err.message || 'Authentication failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleError = () => {
     console.error('Google Login Failed');
+    setError('Google sign-in failed. Please try again.');
   };
 
   return (
@@ -75,6 +89,20 @@ export default function LoginPage() {
           <p className="mb-8 text-center text-gray-600 dark:text-gray-400">
             Sign in to access your notes
           </p>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 rounded-lg bg-red-50 p-3 text-center text-sm text-red-600 dark:bg-red-900/20 dark:text-red-400">
+              {error}
+            </div>
+          )}
+
+          {/* Loading State */}
+          {isLoading && (
+            <div className="mb-4 text-center text-gray-600 dark:text-gray-400">
+              Signing in...
+            </div>
+          )}
 
           {/* Google Sign-In Button */}
           <div className="flex justify-center">

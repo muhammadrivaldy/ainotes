@@ -10,12 +10,11 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      # Persist ChromaDB vector store
-      - ./backend/db_chroma:/app/db_chroma
-      # Persist SQLite chat history
-      - ./backend/chat_history.db:/app/chat_history.db
+      # Persist database folder (SQLite + ChromaDB)
+      - ./backend/database:/app/database
     environment:
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
     env_file:
       - ./backend/.env
     restart: unless-stopped

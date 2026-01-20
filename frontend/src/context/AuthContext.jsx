@@ -16,6 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { getToken, removeToken, logout as apiLogout } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -27,12 +28,19 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem('user');
-      if (storedUser) {
+      const token = getToken();
+
+      if (storedUser && token) {
         setUser(JSON.parse(storedUser));
+      } else {
+        // Clear inconsistent state
+        localStorage.removeItem('user');
+        removeToken();
       }
     } catch (err) {
       console.error('Failed to parse stored user:', err);
       localStorage.removeItem('user');
+      removeToken();
     } finally {
       setLoading(false);
     }
@@ -45,10 +53,10 @@ export function AuthProvider({ children }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    apiLogout();
   };
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = !!user && !!getToken();
 
   return (
     <AuthContext.Provider value={{ user, loading, isAuthenticated, login, logout }}>

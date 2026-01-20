@@ -11,10 +11,13 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
   - [With Docker](#with-docker)
 - [Project Structure](#project-structure)
 - [Configuration](#configuration)
+- [Authentication](#authentication)
 - [License](#license)
 
 ## Features
 
+- **User Authentication** - Google OAuth integration with JWT session tokens
+- **Per-User Data Isolation** - Each user has their own chat history and knowledge base
 - **Natural Language Storage** - Save information through conversational statements
 - **Semantic Search** - Query stored knowledge with intelligent similarity matching
 - **Memory Deletion** - Remove specific memories by describing the content
@@ -33,6 +36,7 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
 - **ChromaDB** - Vector database for embeddings
 - **SQLModel** - SQL database ORM (SQLite)
 - **OpenRouter** - LLM API provider (GPT-4o-mini)
+- **python-jose** - JWT token handling
 - **Uvicorn** - ASGI server
 - **SlowAPI** - Rate limiting middleware
 
@@ -59,7 +63,7 @@ pip install -r requirements.txt
 
 # Configure environment
 cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
+# Edit .env and add your OPENROUTER_API_KEY and JWT_SECRET_KEY
 
 # Run the server
 make dev
@@ -94,7 +98,7 @@ Run the API in production mode:
 ```bash
 # Configure environment
 cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
+# Edit .env and add your OPENROUTER_API_KEY and JWT_SECRET_KEY
 
 # Build and start the container
 docker-compose up -d
@@ -106,14 +110,15 @@ docker-compose up -d
 
 ```js
 ainotes/
-├── db_chroma/                 # Persistent storage
-│   ├── chroma.sqlite3         # ChromaDB metadata
-│   └── {collection-id}/       # Vector embeddings
+├── database/                  # Persistent storage (git ignored)
+│   ├── chat_history.db        # SQLite database with users and messages
+│   └── chroma/                # ChromaDB vector embeddings
+│       └── user_{id}/         # Per-user vector collections
 ├── brain.py                   # Second Brain agent with LangGraph
 ├── main.py                    # FastAPI application entry point
-├── models.py                  # Pydantic data models
+├── models.py                  # Pydantic/SQLModel data models
 ├── database.py                # SQLModel database configuration
-├── chat_history.db            # SQLite chat history (persistent)
+├── auth.py                    # JWT authentication logic
 ├── requirements.txt           # Python dependencies
 ├── .env                       # Environment variables (git ignored)
 ├── .env.example               # Environment variables template
@@ -131,7 +136,15 @@ ainotes/
 Configure the API using the `.env` file:
 
 ```env
+# OpenRouter Configuration (required)
 OPENROUTER_API_KEY=your_openrouter_api_key_here
+OPENROUTER_API_BASE=https://openrouter.ai/api/v1
+OPENROUTER_EMBEDDING_MODEL=text-embedding-3-small
+OPENROUTER_AI_MODEL=openai/gpt-4o-mini
+
+# JWT Configuration (required)
+JWT_SECRET_KEY=your-secret-key-change-in-production
+JWT_EXPIRATION_DAYS=7
 ```
 
 ### Rate Limiting
@@ -143,6 +156,27 @@ Adjust rate limits in `main.py`:
 @limiter.limit("10/minute")  # Change from 5 to 10 requests per minute
 async def chat_endpoint(...):
 ```
+
+## Authentication
+
+The API uses JWT-based authentication with Google OAuth:
+
+1. Frontend authenticates user with Google OAuth
+2. Frontend sends Google credential to `POST /auth/google`
+3. Backend verifies credential and creates/retrieves user
+4. Backend returns JWT token (valid for 7 days)
+5. Frontend includes JWT in Authorization header for all requests
+
+### API Endpoints
+
+| Endpoint | Method | Auth | Description |
+| ---------- | -------- | ---- | ------------- |
+| `/` | GET | No | Health check |
+| `/auth/google` | POST | No | Google OAuth login |
+| `/auth/me` | GET | Yes | Get current user |
+| `/chat` | POST | Yes | Send message (rate limited: 5/min) |
+| `/history` | GET | Yes | Get user's chat history |
+| `/history` | DELETE | Yes | Clear user's chat history |
 
 ## License
 

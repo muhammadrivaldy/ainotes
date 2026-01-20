@@ -9,3 +9,4 @@ sqlmodel
 langchain-chroma
 langgraph
 slowapi
+python-jose[cryptography]
