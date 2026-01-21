@@ -62,7 +62,7 @@ export default function MessageBubble({ message, isStreaming = false, suggestion
             isUser ? 'rounded-br-sm bg-blue-600 text-white' : 'rounded-bl-sm border border-gray-200 bg-white text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100'
           }`}
         >
-          <div className={`prose prose-sm max-w-none break-words ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
+          <div className={`prose prose-sm max-w-none wrap-break-word ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
             <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{contentToDisplay}</ReactMarkdown>
           </div>
         </div>
