@@ -54,8 +54,18 @@ Important Rules:
 - Answer questions ONLY using information retrieved from `query_recall`.
 - When presenting retrieved information, you MUST show ALL details from the search results WITHOUT summarizing, \
 paraphrasing, or omitting any information. Present the complete information exactly as retrieved.
-- Do NOT use your pre-trained knowledge. If no results are found, say: \
-"I don't have that information right now, maybe you can elaborate more about that with me."
+
+Handling Search Results:
+- If query_recall returns content with "[RELATED_INFO]" section, present the main content first, then show \
+the related info as: "You might also find this relevant: [related content]"
+- If query_recall returns only "[RELATED_INFO]", say: "I found some related information that might help: [content]. \
+Is this what you were looking for, or would you like me to search for something more specific?"
+- If query_recall returns "NO_EXACT_MATCH|AVAILABLE_TOPICS:[topics]", respond: "I don't have specific information \
+about that, but I do have notes about: [list topics]. Would any of these help? Or could you tell me more about what you're looking for?"
+- If query_recall returns "NO_EXACT_MATCH|NO_DATA", respond: "I don't have any information saved yet. Could you tell \
+me more about what you're looking for, or would you like to share that information with me to remember for later?"
+- If query_recall returns "NO_EXACT_MATCH|DISTANT_RESULTS", respond: "I couldn't find a close match for that. \
+Could you rephrase your question or provide more details about what you're trying to recall?"
 """
 
     def __init__(self, user_id: int):
@@ -136,14 +146,53 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
             Use this when the user asks a personal question or tries to recall a fact.
             """
             # Filter by user_id to only retrieve current user's data
-            results = vector_store.similarity_search(
+            # Increase k to 10 for broader search
+            results = vector_store.similarity_search_with_score(
                 query,
-                k=3,
+                k=10,
                 filter={"user_id": user_id}
             )
+
             if not results:
-                return "I don't have that information right now, maybe you can elaborate more about that with me."
-            return "\n\n".join([doc.page_content for doc in results])
+                # Get available tags to help user
+                try:
+                    all_results = vector_store.get(where={"user_id": user_id}, limit=100)
+                    if all_results and all_results.get('metadatas'):
+                        tags = set()
+                        for metadata in all_results['metadatas']:
+                            tags_str = metadata.get('tags', '')
+                            if tags_str:
+                                tags.update(tag.strip() for tag in tags_str.split(',') if tag.strip())
+                        if tags:
+                            tags_list = sorted(list(tags))
+                            return f"NO_EXACT_MATCH|AVAILABLE_TOPICS:{','.join(tags_list)}"
+                except Exception as e:
+                    print(f"Error getting topics: {e}")
+
+                return "NO_EXACT_MATCH|NO_DATA"
+
+            # Separate high-confidence vs related results
+            # Lower distance = more similar (distance ranges from 0 to 2)
+            high_confidence = []
+            related = []
+
+            for doc, distance in results:
+                if distance < 0.8:  # High confidence match
+                    high_confidence.append(doc.page_content)
+                elif distance < 1.5:  # Related information
+                    related.append(doc.page_content)
+
+            if high_confidence:
+                response = "\n\n".join(high_confidence)
+                if related:
+                    response += f"\n\n[RELATED_INFO]\n" + "\n\n".join(related[:3])
+                return response
+            elif related:
+                # Only related info, no exact matches
+                return "[RELATED_INFO]\n" + "\n\n".join(related[:5])
+            else:
+                # Results exist but too distant
+                return "NO_EXACT_MATCH|DISTANT_RESULTS"
 
         @tool
         def delete_recall(content: str) -> str:
