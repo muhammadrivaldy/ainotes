@@ -52,11 +52,11 @@ CRITICAL - Database is Source of Truth:
 
 Tools:
 1. `add_recall` - Use when the user provides a statement or fact to save.
-2. `query_recall` - Use when the user asks a question. Always search memory first.
+2. `query_recall` - Use when the user asks a SPECIFIC question about content (e.g., "What did I say about movies?").
 3. `delete_recall` - Use when the user wants to delete, remove, or forget information.
-4. `get_tags` - Use when the user asks to see their tags, categories, topics, or wants an overview of stored information. \
-This tool automatically detects and fixes similar/misspelled tags.
-5. `get_items_by_tag` - Use when the user asks to see notes with a specific tag/category (e.g., "show me work notes", "notes tagged with recipe").
+4. `get_tags` - Use when the user explicitly asks about tags/categories/topics. Automatically detects and fixes similar/misspelled tags.
+5. `get_all_notes` - Use when the user asks BROAD questions about what they have stored (e.g., "What knowledge do you have?", "Show me everything").
+6. `get_items_by_tag` - Use when the user asks to see notes with a specific tag/category (e.g., "show me work notes").
 
 Important Rules:
 - When using `add_recall`, return the tool's output EXACTLY as-is without rephrasing or adding extra text.
@@ -66,13 +66,31 @@ paraphrasing, or omitting any information. Present the complete information exac
 If the user asks to "clean up tags" or "fix tag issues", simply call `get_tags` - it will do this automatically.
 
 CRITICAL - Tool Selection Rules:
-- If the user mentions a SPECIFIC TAG/CATEGORY by name (e.g., "show family notes", "notes with tag work", \
-"see entertainment tag", "notes that have tag X"), you MUST IMMEDIATELY call `get_items_by_tag` with that exact tag name.
-- DO NOT answer from memory or conversation history. ALWAYS call the tool to check the current database state.
-- NEVER use `query_recall` when the user explicitly mentions a tag name. Always use `get_items_by_tag` for tag-based requests.
-- Even if you think you don't have that tag based on previous responses, CALL THE TOOL ANYWAY. The data may have changed.
-- Only use `query_recall` for general questions or when searching by content/meaning, NOT for tag filtering.
-- Keywords that indicate tag filtering: "tag", "category", "tagged with", "notes with tag", "have tag", "that have X tag".
+
+1. BROAD OVERVIEW QUESTIONS - Use `get_all_notes`:
+   - "What knowledge do you have?", "What do you know?", "Show me everything"
+   - "What information do I have?", "List all my notes", "Show all stored info"
+   - Questions asking for EVERYTHING or ALL information
+
+2. TAG/CATEGORY LIST QUESTIONS - Use `get_tags`:
+   - ONLY when user explicitly asks about "tags", "categories", or "topics"
+   - "Show my tags", "What categories do I have?", "List all tags"
+   - Must contain the words: "tag", "category", "categories", "topic", "topics"
+
+3. TAG-SPECIFIC QUESTIONS - Use `get_items_by_tag`:
+   - User mentions a SPECIFIC TAG/CATEGORY by name (e.g., "show family notes", "notes with tag work")
+   - "See entertainment tag", "notes that have tag X", "show me my work notes"
+   - MUST IMMEDIATELY call `get_items_by_tag` with that exact tag name.
+   - Keywords: "notes with tag", "have tag", "show X notes", "tagged with"
+
+4. SPECIFIC CONTENT QUESTIONS - Use `query_recall`:
+   - User asks about SPECIFIC information or facts (e.g., "What did I say about movies?")
+   - Questions about particular topics or content
+   - Semantic search for specific information
+
+IMPORTANT:
+- DO NOT answer from memory or conversation history. ALWAYS call the tool to check current database.
+- Even if you think you don't have data, CALL THE TOOL ANYWAY. The database may have changed.
 
 Handling Search Results:
 - If query_recall returns content with "[RELATED_INFO]" section, present the main content first, then show \
@@ -248,10 +266,14 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
             """
             Retrieve all tags/categories with document counts for the user's stored information.
             Automatically detects and fixes similar/misspelled tags.
-            Use this when the user asks to see their tags, categories, topics, or wants an overview of stored information.
 
-            IMPORTANT: Always call this tool when the user asks about tags. Do not list tags from memory.
-            The database is the source of truth, not conversation history.
+            Use this tool ONLY when the user explicitly asks about tags/categories/topics:
+            - "Show my tags", "What tags do I have?", "List all categories"
+            - "What topics are there?", "Show categories"
+            - Must contain the words: "tag", "category", "categories", "topic", "topics"
+
+            IMPORTANT: Always call this tool when the user explicitly asks about tags.
+            Do not list tags from memory. The database is the source of truth, not conversation history.
             """
             try:
                 # Get all documents for this user
@@ -366,6 +388,41 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
                 return "Sorry, I couldn't retrieve your tags at the moment."
 
         @tool
+        def get_all_notes() -> str:
+            """
+            Retrieve ALL stored information/notes for the user without filtering.
+            Use this when the user asks broad questions about what they have stored:
+            - "What knowledge do you have?", "What do you know?", "Show me everything"
+            - "What information do I have?", "List all my notes", "Show all stored info"
+
+            IMPORTANT: This retrieves everything, not filtered by tags or semantic search.
+            """
+            try:
+                # Get all documents for this user
+                results = vector_store.get(
+                    where={"user_id": user_id},
+                    limit=1000
+                )
+
+                if not results or not results.get('documents'):
+                    return "You don't have any saved information yet."
+
+                documents = results['documents']
+
+                if len(documents) == 0:
+                    return "You don't have any saved information yet."
+
+                # Format all documents
+                formatted_docs = "\n\n---\n\n".join(documents)
+                return f"Here's all the information you've shared with me ({len(documents)} note{'s' if len(documents) > 1 else ''}):\n\n{formatted_docs}"
+
+            except Exception as e:
+                print(f"Error getting all notes: {e}")
+                import traceback
+                traceback.print_exc()
+                return "Sorry, I couldn't retrieve your notes at the moment."
+
+        @tool
         def get_items_by_tag(tag: str) -> str:
             """
             Retrieve all information/notes that have a specific tag or category.
@@ -423,7 +480,7 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
                 traceback.print_exc()
                 return f"Sorry, I couldn't retrieve notes with tag '{tag}' at the moment. Error: {str(e)}"
 
-        self.tools = [add_recall, query_recall, delete_recall, get_tags, get_items_by_tag]
+        self.tools = [add_recall, query_recall, delete_recall, get_tags, get_all_notes, get_items_by_tag]
         self.llm_with_tools = self.llm.bind_tools(self.tools)
 
         # Build Graph
