@@ -23,6 +23,7 @@ import { Bot, User } from 'lucide-react';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useAuth } from '../../context/AuthContext';
 import SuggestionChips from './SuggestionChips';
+import TagChips from './TagChips';
 
 export default function MessageBubble({ message, isStreaming = false, suggestions = [], onSuggestionClick }) {
   const { user } = useAuth();
@@ -30,6 +31,18 @@ export default function MessageBubble({ message, isStreaming = false, suggestion
   const { displayedText, isComplete } = useTypewriter(message.content, 20, isStreaming && !isUser);
 
   const contentToDisplay = isStreaming && !isUser ? displayedText : message.content;
+
+  // Parse tags from AI response (format: "Information stored successfully with tags: work, meeting")
+  const parseTags = (content) => {
+    const tagMatch = content.match(/with tags?: ([^\n.]+)/i);
+    if (tagMatch) {
+      return tagMatch[1].split(',').map(tag => tag.trim()).filter(t => t);
+    }
+    return [];
+  };
+
+  const tags = !isUser && message.role === 'assistant' ? parseTags(message.content) : [];
+  const showTags = tags.length > 0;
 
   // Show suggestions only for AI messages after typewriter completes
   const showSuggestions = !isUser && isComplete && suggestions.length > 0;
@@ -56,6 +69,7 @@ export default function MessageBubble({ message, isStreaming = false, suggestion
 
         {/* Suggestion chips - shown below AI message bubble */}
         <SuggestionChips suggestions={suggestions} onSuggestionClick={onSuggestionClick} visible={showSuggestions} />
+        <TagChips tags={tags} visible={showTags} />
       </div>
 
       {/* User Avatar - Right side */}

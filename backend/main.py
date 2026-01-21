@@ -24,7 +24,8 @@ from slowapi.errors import RateLimitExceeded
 
 from models import (
     ChatRequest, ChatResponse, ChatMessage, Message,
-    GoogleAuthRequest, AuthResponse, UserResponse, User, Suggestion
+    GoogleAuthRequest, AuthResponse, UserResponse, User, Suggestion,
+    Tag, TaggedItem
 )
 from database import create_db_and_tables, get_session, get_or_create_user
 from auth import create_access_token, decode_google_token, get_current_user
@@ -141,6 +142,34 @@ def clear_history(
     session.commit()
     return {"status": "History cleared"}
 
+@app.get("/tags", response_model=List[Tag])
+async def get_user_tags(
+    current_user: User = Depends(get_current_user)
+):
+    """Get all tags for current user with document counts."""
+    user_brain = get_user_brain(current_user.id)
+    tags = user_brain.get_all_tags()
+    return tags
+
+@app.get("/tags/{tag}/items", response_model=List[TaggedItem])
+async def get_items_by_tag(
+    tag: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Get all information items with a specific tag."""
+    user_brain = get_user_brain(current_user.id)
+    items = user_brain.get_items_by_tag(tag)
+    return items
+
+@app.post("/tags/regenerate")
+async def regenerate_tags(
+    current_user: User = Depends(get_current_user)
+):
+    """Regenerate tags for all existing information without tags."""
+    user_brain = get_user_brain(current_user.id)
+    count = user_brain.regenerate_all_tags()
+    return {"message": f"Regenerated tags for {count} items", "count": count}
+
 @app.post("/chat", response_model=ChatResponse)
 @limiter.limit("5/minute")
 async def chat_endpoint(
@@ -185,13 +214,17 @@ async def chat_endpoint(
         session.commit()
 
         # 5. Get related suggestions from knowledge base
+        # Only show suggestions when retrieving info, not when saving
         suggestions = []
-        try:
-            search_context = f"{body.message} {response_text}"
-            suggestion_results = user_brain.get_suggestions(context=search_context, k=1)
-            suggestions = [Suggestion(**s) for s in suggestion_results]
-        except Exception as e:
-            print(f"Warning: Failed to fetch suggestions: {e}")
+        is_saving = "Information stored successfully" in response_text or "Deleted:" in response_text
+
+        if not is_saving:
+            try:
+                search_context = f"{body.message} {response_text}"
+                suggestion_results = user_brain.get_suggestions(context=search_context, k=1)
+                suggestions = [Suggestion(**s) for s in suggestion_results]
+            except Exception as e:
+                print(f"Warning: Failed to fetch suggestions: {e}")
 
         return ChatResponse(response=response_text, suggestions=suggestions)
     except Exception as e:

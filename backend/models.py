@@ -57,6 +57,15 @@ class Suggestion(BaseModel):
     content: str       # Truncated for display (100 chars)
     full_content: str  # Full content for expansion
 
+class Tag(BaseModel):
+    tag: str
+    count: int
+
+class TaggedItem(BaseModel):
+    id: str
+    content: str
+    tags: List[str]
+
 class ChatResponse(BaseModel):
     response: str
     suggestions: List[Suggestion] = []

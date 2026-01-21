@@ -49,8 +49,12 @@ Tools:
 2. `query_recall` - Use when the user asks a question. Always search memory first.
 3. `delete_recall` - Use when the user wants to delete, remove, or forget information.
 
-Important: Answer questions ONLY using information retrieved from `query_recall`. \
-Do NOT use your pre-trained knowledge. If no results are found, say: \
+Important Rules:
+- When using `add_recall`, return the tool's output EXACTLY as-is without rephrasing or adding extra text.
+- Answer questions ONLY using information retrieved from `query_recall`.
+- When presenting retrieved information, you MUST show ALL details from the search results WITHOUT summarizing, \
+paraphrasing, or omitting any information. Present the complete information exactly as retrieved.
+- Do NOT use your pre-trained knowledge. If no results are found, say: \
 "I don't have that information right now, maybe you can elaborate more about that with me."
 """
 
@@ -83,6 +87,28 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
         # Define Tools - capture vector_store and user_id for data isolation
         vector_store = self.vector_store
         user_id = self.user_id
+        llm = self.llm
+
+        def generate_tags(content: str, max_tags: int = 3) -> list:
+            """Generate 1-3 semantic tags for content using LLM."""
+            prompt = f"""Analyze this information and generate 1-3 relevant category tags.
+
+Tags should be:
+- Single words or short phrases (max 2 words)
+- Lowercase
+- General categories like: work, personal, recipe, contact, meeting, deadline, health, finance, travel, shopping, learning, etc.
+
+Information: {content}
+
+Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe, food")."""
+
+            try:
+                response = llm.invoke(prompt)
+                tags = [tag.strip().lower() for tag in response.content.split(',')]
+                return [tag for tag in tags if tag][:max_tags]
+            except Exception as e:
+                print(f"Tag generation failed: {e}")
+                return ["note"]  # Fallback tag
 
         @tool
         def add_recall(content: str) -> str:
@@ -90,12 +116,18 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
             Useful for storing new information, facts, notes, or memories into the second brain.
             Use this when the user makes a statement, shares a fact, or asks to save something.
             """
-            # Add metadata with user_id for data isolation
+            # Generate tags
+            tags = generate_tags(content)
+
+            # Add metadata with user_id AND tags
             vector_store.add_texts(
                 texts=[content],
-                metadatas=[{"user_id": user_id}]
+                metadatas=[{
+                    "user_id": user_id,
+                    "tags": ",".join(tags)
+                }]
             )
-            return "Information stored successfully."
+            return f"Information stored successfully with tags: {', '.join(tags)}"
 
         @tool
         def query_recall(query: str) -> str:
@@ -197,6 +229,17 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
 
         result = self.app.invoke({"messages": chat_history})
 
+        # Check if add_recall tool was used and return its output directly
+        tool_output = None
+        for msg in result["messages"]:
+            if msg.type == "tool":
+                # Get the tool output (this is the raw tool return value)
+                tool_output = msg.content
+                # Check if it's from add_recall (contains "with tags:")
+                if "with tags:" in tool_output:
+                    return tool_output
+
+        # Otherwise return the AI's response
         for msg in reversed(result["messages"]):
             if msg.type == "ai":
                 return msg.content
@@ -236,3 +279,113 @@ Do NOT use your pre-trained knowledge. If no results are found, say: \
                 })
 
         return suggestions
+
+    def get_all_tags(self) -> List[dict]:
+        """Get all unique tags with document counts for current user."""
+        try:
+            # Get all documents for this user
+            results = self.vector_store.get(
+                where={"user_id": self.user_id}
+            )
+
+            if not results or not results.get('metadatas'):
+                return []
+
+            # Count tags
+            tag_counts = {}
+            for metadata in results['metadatas']:
+                tags_str = metadata.get('tags', '')
+                if tags_str:
+                    for tag in tags_str.split(','):
+                        tag = tag.strip()
+                        if tag:
+                            tag_counts[tag] = tag_counts.get(tag, 0) + 1
+
+            # Return sorted by count (descending)
+            return [
+                {"tag": tag, "count": count}
+                for tag, count in sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
+            ]
+        except Exception as e:
+            print(f"Error getting tags: {e}")
+            return []
+
+    def get_items_by_tag(self, tag: str, limit: int = 100) -> List[dict]:
+        """Get all information items with a specific tag."""
+        try:
+            # Get all documents for this user
+            results = self.vector_store.get(
+                where={"user_id": self.user_id},
+                limit=limit
+            )
+
+            if not results or not results.get('documents'):
+                return []
+
+            # Filter by tag
+            items = []
+            for i, metadata in enumerate(results['metadatas']):
+                tags_str = metadata.get('tags', '')
+                if tag in [t.strip() for t in tags_str.split(',')]:
+                    items.append({
+                        "id": results['ids'][i],
+                        "content": results['documents'][i],
+                        "tags": [t.strip() for t in tags_str.split(',') if t.strip()]
+                    })
+
+            return items
+        except Exception as e:
+            print(f"Error getting items by tag: {e}")
+            return []
+
+    def regenerate_all_tags(self) -> int:
+        """Regenerate tags for all existing documents without tags."""
+        try:
+            # Get all documents for this user
+            results = self.vector_store.get(
+                where={"user_id": self.user_id}
+            )
+
+            if not results or not results.get('documents'):
+                return 0
+
+            count = 0
+            for i, metadata in enumerate(results['metadatas']):
+                # Only regenerate if no tags exist
+                if not metadata.get('tags'):
+                    doc_id = results['ids'][i]
+                    content = results['documents'][i]
+                    tags = self._generate_tags_for_migration(content)
+
+                    # Update metadata
+                    self.vector_store.update_document(
+                        doc_id,
+                        metadata={**metadata, "tags": ",".join(tags)}
+                    )
+                    count += 1
+
+            return count
+        except Exception as e:
+            print(f"Error regenerating tags: {e}")
+            return 0
+
+    def _generate_tags_for_migration(self, content: str, max_tags: int = 3) -> list:
+        """Generate tags for migration (standalone method)."""
+        prompt = f"""Analyze this information and generate 1-3 relevant category tags.
+
+Tags should be:
+- Single words or short phrases (max 2 words)
+- Lowercase
+- General categories like: work, personal, recipe, contact, meeting, deadline, health, finance, travel, shopping, learning, etc.
+
+Information: {content}
+
+Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe, food")."""
+
+        try:
+            response = self.llm.invoke(prompt)
+            tags = [tag.strip().lower() for tag in response.content.split(',')]
+            return [tag for tag in tags if tag][:max_tags]
+        except Exception as e:
+            print(f"Tag generation failed: {e}")
+            return ["note"]  # Fallback tag
