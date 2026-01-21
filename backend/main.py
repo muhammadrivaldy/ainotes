@@ -213,20 +213,7 @@ async def chat_endpoint(
         session.add(ai_msg)
         session.commit()
 
-        # 5. Get related suggestions from knowledge base
-        # Only show suggestions when retrieving info, not when saving
-        suggestions = []
-        is_saving = "Information stored successfully" in response_text or "Deleted:" in response_text
-
-        if not is_saving:
-            try:
-                search_context = f"{body.message} {response_text}"
-                suggestion_results = user_brain.get_suggestions(context=search_context, k=1)
-                suggestions = [Suggestion(**s) for s in suggestion_results]
-            except Exception as e:
-                print(f"Warning: Failed to fetch suggestions: {e}")
-
-        return ChatResponse(response=response_text, suggestions=suggestions)
+        return ChatResponse(response=response_text, suggestions=[])
     except Exception as e:
         print(f"Error processing chat: {e}")
         raise HTTPException(status_code=500, detail="An internal error occurred. Please try again later.")

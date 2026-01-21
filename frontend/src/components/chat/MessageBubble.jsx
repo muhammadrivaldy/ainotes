@@ -22,10 +22,9 @@ import remarkBreaks from 'remark-breaks';
 import { Bot, User } from 'lucide-react';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useAuth } from '../../context/AuthContext';
-import SuggestionChips from './SuggestionChips';
 import TagChips from './TagChips';
 
-export default function MessageBubble({ message, isStreaming = false, suggestions = [], onSuggestionClick }) {
+export default function MessageBubble({ message, isStreaming = false }) {
   const { user } = useAuth();
   const isUser = message.role === 'user';
   const { displayedText, isComplete } = useTypewriter(message.content, 20, isStreaming && !isUser);
@@ -43,9 +42,6 @@ export default function MessageBubble({ message, isStreaming = false, suggestion
 
   const tags = !isUser && message.role === 'assistant' ? parseTags(message.content) : [];
   const showTags = tags.length > 0;
-
-  // Show suggestions only for AI messages after typewriter completes
-  const showSuggestions = !isUser && isComplete && suggestions.length > 0;
 
   return (
     <div className={`group mb-6 flex w-full items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -67,8 +63,7 @@ export default function MessageBubble({ message, isStreaming = false, suggestion
           </div>
         </div>
 
-        {/* Suggestion chips - shown below AI message bubble */}
-        <SuggestionChips suggestions={suggestions} onSuggestionClick={onSuggestionClick} visible={showSuggestions} />
+        {/* Tag chips - shown below AI message bubble */}
         <TagChips tags={tags} visible={showTags} />
       </div>
 

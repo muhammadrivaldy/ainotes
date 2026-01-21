@@ -18,7 +18,7 @@
 import React, { useRef, useEffect } from 'react';
 import MessageBubble from './MessageBubble';
 
-export default function StreamFeed({ messages, streamingMessageId, onSuggestionClick }) {
+export default function StreamFeed({ messages, streamingMessageId }) {
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -41,8 +41,6 @@ export default function StreamFeed({ messages, streamingMessageId, onSuggestionC
               key={msg.id}
               message={msg}
               isStreaming={msg.id === streamingMessageId}
-              suggestions={msg.suggestions || []}
-              onSuggestionClick={onSuggestionClick}
             />
           ))
         )}

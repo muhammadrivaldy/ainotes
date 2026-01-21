@@ -81,7 +81,6 @@ export default function ChatPage() {
       // 4. Replace loading message with AI response
       const aiMessageId = Date.now() + 1;
       const messageContent = response.response;
-      const messageSuggestions = response.suggestions || [];
       setStreamingMessageId(aiMessageId);
 
       setMessages((prev) =>
@@ -91,7 +90,6 @@ export default function ChatPage() {
             id: aiMessageId,
             role: 'ai',
             content: messageContent,
-            suggestions: messageSuggestions,
           })
       );
 
@@ -146,14 +144,9 @@ export default function ChatPage() {
     }
   };
 
-  const handleSuggestionClick = (suggestion) => {
-    // Pre-fill the input with the suggestion content
-    setInputValue(suggestion.full_content);
-  };
-
   return (
     <AppLayout>
-      <StreamFeed messages={messages} streamingMessageId={streamingMessageId} onSuggestionClick={handleSuggestionClick} />
+      <StreamFeed messages={messages} streamingMessageId={streamingMessageId} />
       <InputArea onSend={handleSend} onClear={handleClear} value={inputValue} onChange={setInputValue} />
     </AppLayout>
   );
