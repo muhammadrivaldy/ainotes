@@ -48,6 +48,7 @@ Tools:
 1. `add_recall` - Use when the user provides a statement or fact to save.
 2. `query_recall` - Use when the user asks a question. Always search memory first.
 3. `delete_recall` - Use when the user wants to delete, remove, or forget information.
+4. `get_tags` - Use when the user asks to see their tags, categories, topics, or wants an overview of stored information.
 
 Important Rules:
 - When using `add_recall`, return the tool's output EXACTLY as-is without rephrasing or adding extra text.
@@ -216,7 +217,42 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
 
             return f"Deleted: {doc.page_content[:100]}{'...' if len(doc.page_content) > 100 else ''}"
 
-        self.tools = [add_recall, query_recall, delete_recall]
+        @tool
+        def get_tags() -> str:
+            """
+            Retrieve all tags/categories with document counts for the user's stored information.
+            Use this when the user asks to see their tags, categories, topics, or wants to know what information they have stored.
+            """
+            try:
+                # Get all documents for this user
+                results = vector_store.get(where={"user_id": user_id})
+
+                if not results or not results.get('metadatas'):
+                    return "You don't have any tags yet. Start saving information and I'll automatically categorize it for you!"
+
+                # Count tags
+                tag_counts = {}
+                for metadata in results['metadatas']:
+                    tags_str = metadata.get('tags', '')
+                    if tags_str:
+                        for tag in tags_str.split(','):
+                            tag = tag.strip()
+                            if tag:
+                                tag_counts[tag] = tag_counts.get(tag, 0) + 1
+
+                if not tag_counts:
+                    return "You don't have any tags yet. Start saving information and I'll automatically categorize it for you!"
+
+                # Format as a readable list sorted by count
+                sorted_tags = sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
+                tag_list = "\n".join([f"• {tag}: {count} note{'s' if count > 1 else ''}" for tag, count in sorted_tags])
+
+                return f"Here are your categories:\n\n{tag_list}"
+            except Exception as e:
+                print(f"Error getting tags: {e}")
+                return "Sorry, I couldn't retrieve your tags at the moment."
+
+        self.tools = [add_recall, query_recall, delete_recall, get_tags]
         self.llm_with_tools = self.llm.bind_tools(self.tools)
 
         # Build Graph
