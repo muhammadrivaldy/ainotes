@@ -90,8 +90,9 @@ export const translations = {
         title: 'Developers & Self-Hosters',
         items: ['Full control over your data', 'Deploy anywhere you want', 'Customize to your needs', 'Contribute to community'],
       },
-      comparison: {
+        comparison: {
         title: 'The Difference',
+        features: ['Organization', 'Context', 'Data Privacy', 'Control'],
         traditional: {
           title: 'Traditional Note Apps',
           items: ['Organize into folders', 'Remember to add tags', 'Data stored on third-party servers', 'Vendor lock-in'],
@@ -104,7 +105,7 @@ export const translations = {
     },
     cta: {
       title: 'Ready to Own Your Second Brain?',
-      subtitle: 'Take control of your knowledge with open-source AI Notes. Self-host for complete privacy or try our cloud version—your choice, your data.',
+      subtitle: 'Take control of your knowledge with open-source AI Notes. Self-host for complete privacy—your choice, your data.',
       primaryButton: 'Try Cloud Version',
       secondaryButton: 'Self-Host Now',
       openSource: 'Open Source',
@@ -207,6 +208,7 @@ export const translations = {
       },
       comparison: {
         title: 'Perbedaan',
+        features: ['Pengorganisasian', 'Konteks', 'Privasi Data', 'Kendali'],
         traditional: {
           title: 'Aplikasi Catatan Tradisional',
           items: ['Atur ke dalam folder', 'Ingat untuk menambahkan tag', 'Data disimpan di server pihak ketiga', 'Terkunci pada vendor'],
@@ -219,7 +221,7 @@ export const translations = {
     },
     cta: {
       title: 'Siap Memiliki Otak Kedua Anda?',
-      subtitle: 'Ambil kendali pengetahuan Anda dengan AI Notes open source. Self-host untuk privasi lengkap atau coba versi cloud kami—pilihan Anda, data Anda.',
+      subtitle: 'Ambil kendali pengetahuan Anda dengan AI Notes open source. Self-host untuk privasi lengkap—pilihan Anda, data Anda.',
       primaryButton: 'Coba Versi Cloud',
       secondaryButton: 'Self-Host Sekarang',
       openSource: 'Open Source',

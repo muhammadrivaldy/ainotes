@@ -97,6 +97,13 @@ function updatePageContent(lang: Language) {
   updateElementText('[data-i18n="benefits.comparison.traditional.title"]', t.benefits.comparison.traditional.title);
   updateElementText('[data-i18n="benefits.comparison.aiNotes.title"]', t.benefits.comparison.aiNotes.title);
 
+  // Update comparison features
+  if (t.benefits.comparison.features) {
+    t.benefits.comparison.features.forEach((feature, index) => {
+      updateElementText(`[data-i18n="benefits.comparison.features.${index}"]`, feature);
+    });
+  }
+
   // Update traditional items
   t.benefits.comparison.traditional.items.forEach((item, index) => {
     updateElementText(`[data-i18n="benefits.comparison.traditional.item${index}"]`, item);
