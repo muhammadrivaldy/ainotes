@@ -18,6 +18,7 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
 
 - **User Authentication** - Google OAuth integration with JWT session tokens
 - **Per-User Data Isolation** - Each user has their own chat history and knowledge base
+- **Smart Help System** - Automatically detects confused users and provides comprehensive guidance with examples
 - **Natural Language Storage** - Save information through conversational statements
 - **Semantic Search** - Query stored knowledge with intelligent similarity matching
 - **Memory Deletion** - Remove specific memories by describing the content
@@ -155,6 +156,61 @@ Adjust rate limits in `main.py`:
 @app.post("/chat")
 @limiter.limit("10/minute")  # Change from 5 to 10 requests per minute
 async def chat_endpoint(...):
+```
+
+## Smart Help System
+
+The AI automatically detects when users are confused and provides comprehensive help with examples. This feature enhances user experience by proactively guiding users who may not understand the system's capabilities.
+
+### How It Works
+
+1. **Automatic Detection**: The LLM analyzes each user message for confusion signals:
+   - Help requests: "what can you do?", "help", "how does this work?"
+   - Confusion indicators: "I don't understand", "confused", unclear intents
+   - Vague questions: "how do I start?", "what now?"
+
+2. **Context-Aware Response**: Help content adapts based on user state:
+   - **New users** (no data saved): Focus on getting started with concrete examples
+   - **Existing users** (has data): Emphasize advanced features like search and tag management
+
+3. **Tool-Based Implementation**: Uses dedicated `provide_help` tool integrated into LangGraph workflow
+   - Triggered automatically by system prompt when confusion detected
+   - Provides 7 capability categories with real-world examples
+   - Includes pro tips and encouragement to try features
+
+### Help Content Structure
+
+The help response includes:
+- Brief introduction to the Second Brain concept
+- 7 core capabilities with concrete examples:
+  1. Save information (with auto-tagging)
+  2. Retrieve specific information (semantic search)
+  3. Search by meaning (context understanding)
+  4. Manage tags (auto-cleanup)
+  5. Filter by tag (category filtering)
+  6. Delete information (removal by description)
+  7. See everything (broad overview)
+- Pro tips about privacy, auto-tagging, and semantic search
+- Call-to-action encouraging user engagement
+
+### Logging
+
+Confusion detection events are logged for monitoring:
+```python
+logger.info(f"Help provided to user {user_id} - confusion detected")
+```
+
+Monitor these logs to track help usage patterns and refine detection accuracy.
+
+### Customization
+
+To adjust confusion detection sensitivity, modify the system prompt in `brain.py`:
+```python
+SYSTEM_PROMPT = """\
+CONFUSION DETECTION:
+# Add or remove confusion signals here
+# Adjust detection criteria
+"""
 ```
 
 ## Authentication
