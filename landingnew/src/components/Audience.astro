@@ -1,0 +1,78 @@
+---
+import { Code2, User, Briefcase } from 'lucide-react';
+
+const audiences = [
+  {
+    icon: Briefcase,
+    title: "Knowledge Workers",
+    items: [
+      "Store code snippets & technical notes",
+      "Remember meeting decisions",
+      "Track project requirements",
+      "Save commands and configs"
+    ],
+    color: "from-blue-500/20 to-blue-600/5",
+    accent: "text-blue-400"
+  },
+  {
+    icon: User,
+    title: "Personal Use",
+    items: [
+      "Remember birthdays and dates",
+      "Save recipes and book recs",
+      "Store password hints",
+      "Keep thoughts and ideas"
+    ],
+    color: "from-purple-500/20 to-purple-600/5",
+    accent: "text-purple-400"
+  },
+  {
+    icon: Code2,
+    title: "Developers",
+    items: [
+      "Full control over your data",
+      "Deploy anywhere you want",
+      "Customize to your needs",
+      "Contribute to community"
+    ],
+    color: "from-emerald-500/20 to-emerald-600/5",
+    accent: "text-emerald-400"
+  }
+];
+---
+
+<section class="py-24 relative bg-surface/30">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-display font-bold mb-6">
+        Perfect For
+      </h2>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto font-light">
+        Whether you're at work or at home, AI Notes adapts to your needs.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      {audiences.map((item) => (
+        <div class="group relative p-1 rounded-3xl bg-gradient-to-b from-white/5 to-transparent hover:from-white/10 transition-colors">
+          <div class="h-full p-8 rounded-[22px] bg-black/50 backdrop-blur-xl border border-white/5 flex flex-col">
+            <div class={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-6 border border-white/5 group-hover:scale-105 transition-transform duration-300`}>
+              <item.icon size={28} className={item.accent} />
+            </div>
+            
+            <h3 class="text-2xl font-display font-bold mb-6 text-white">{item.title}</h3>
+            
+            <ul class="space-y-4 flex-1">
+              {item.items.map((listItem) => (
+                <li class="flex items-start gap-3 text-gray-400 group-hover:text-gray-300 transition-colors font-light">
+                  <span class={`w-1.5 h-1.5 rounded-full mt-2.5 flex-shrink-0 bg-current ${item.accent}`}></span>
+                  <span class="text-sm leading-relaxed">{listItem}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
