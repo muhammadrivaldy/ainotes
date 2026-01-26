@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="404 - Page Not Found | AI Notes">
+  <main class="relative overflow-hidden">
+    <Navbar />
+    <div class="min-h-[80vh] flex items-center justify-center px-4">
+      <div class="text-center max-w-2xl mx-auto">
+        <h1 class="text-8xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-500 bg-clip-text text-transparent">
+          404
+        </h1>
+        <h2 class="text-3xl font-semibold mb-4">
+          Page Not Found
+        </h2>
+        <p class="text-gray-400 mb-8">
+          Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
+        </p>
+        <a 
+          href="/" 
+          class="inline-block px-8 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors"
+        >
+          Back to Home
+        </a>
+      </div>
+    </div>
+    <Footer />
+  </main>
+</Layout>
