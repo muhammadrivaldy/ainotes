@@ -1,33 +1,22 @@
 {
   "name": "ainotes-landing",
-  "version": "1.0.0",
-  "description": "AI Notes - Your Second Brain landing page",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "astro": "astro"
   },
-  "keywords": [
-    "ai",
-    "notes",
-    "second-brain"
-  ],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@astrojs/react": "^4.4.2",
-    "@astrojs/tailwind": "^6.0.2",
-    "astro": "^5.16.11",
-    "lucide-react": "^0.562.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "tailwindcss": "^3.4.19"
-  },
-  "devDependencies": {
-    "prettier": "^3.8.0",
-    "prettier-plugin-astro": "^0.14.0"
+    "astro": "^4.0.0",
+    "@astrojs/tailwind": "^5.1.0",
+    "tailwindcss": "^3.4.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@astrojs/react": "^3.0.0",
+    "lucide-react": "^0.300.0",
+    "framer-motion": "^10.18.0"
   }
 }

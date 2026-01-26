@@ -1,118 +1,70 @@
 ---
-/*
-    AI Notes Landing Page - Open-source landing page template
-    Copyright (C) 2026 AI Notes
+import { Brain, Search, ShieldCheck, Code2 } from 'lucide-react';
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
+const features = [
+  {
+    icon: Brain,
+    title: "You forget important things",
+    description: "How many times have you forgotten a password hint or a meeting detail? Tell it once, retrieve anytime.",
+    color: "from-red-500/20 to-red-600/5",
+    accent: "text-red-400",
+    border: "group-hover:border-red-500/30"
+  },
+  {
+    icon: Search,
+    title: "Traditional apps are complicated",
+    description: "Stop wasting time with folders and tags. AI Notes understands context—just ask and it finds what you need.",
+    color: "from-orange-500/20 to-orange-600/5",
+    accent: "text-orange-400",
+    border: "group-hover:border-orange-500/30"
+  },
+  {
+    icon: ShieldCheck,
+    title: "Your data stays yours",
+    description: "Self-host on your own server. No cloud dependency, no vendor lock-in. Your knowledge stays private.",
+    color: "from-purple-500/20 to-purple-600/5",
+    accent: "text-purple-400",
+    border: "group-hover:border-purple-500/30"
+  },
+  {
+    icon: Code2,
+    title: "Fully customizable",
+    description: "Open source means you can modify and extend AI Notes to your needs or contribute back to the community.",
+    color: "from-emerald-500/20 to-emerald-600/5",
+    accent: "text-emerald-400",
+    border: "group-hover:border-emerald-500/30"
+  }
+];
 ---
 
-<section id="features" class="py-24 relative overflow-hidden border-t border-white/5 bg-white/[0.02]">
-  <!-- Dynamic Background -->
-  <div class="absolute inset-0">
-    <div class="absolute top-1/2 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
-  </div>
-
-  <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-16">
-      <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm font-semibold mb-4 backdrop-blur-md">
-        <span data-i18n="features.badge">The Problem</span>
-      </div>
-      <h2 data-i18n="features.title" class="text-4xl font-bold text-white sm:text-5xl tracking-tight">Why You Need AI Notes</h2>
-      <p data-i18n="features.subtitle" class="mt-4 text-xl text-slate-400 max-w-2xl mx-auto">
-        Your brain is for thinking, not for storing. Let AI Notes handle your memory so you can focus on what matters.
+<section id="features" class="py-24 relative bg-surface/30">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="mb-20 text-center md:text-left">
+      <h2 class="text-4xl md:text-5xl font-display font-bold mb-6">
+        Why You Need <span class="text-gray-500">AI Notes</span>
+      </h2>
+      <p class="text-xl text-gray-400 max-w-2xl font-light">
+        Your brain is for thinking, not for storing. Let AI handle your memory.
       </p>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
-      <div class="group relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:bg-white/10 hover:border-blue-500/30 transition-all duration-300">
-        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none"></div>
-        <div class="flex items-start gap-5">
-          <div class="flex-shrink-0 w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform border border-red-500/20">
-            <svg class="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-            </svg>
-          </div>
-          <div class="flex-1 relative z-10">
-            <h3 data-i18n="features.forgetThings.title" class="text-xl font-bold text-white mb-3">You forget important things</h3>
-            <p data-i18n="features.forgetThings.description" class="text-slate-400 leading-relaxed">
-              How many times have you forgotten someone's birthday, a password hint, or an important meeting detail? With AI Notes, just tell it once and retrieve it anytime through simple
-              conversation.
-            </p>
+    <div class="grid md:grid-cols-2 gap-6">
+      {features.map((feature) => (
+        <div class={`group p-8 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 ${feature.border} transition-all duration-300 hover:-translate-y-1`}>
+          <div class="flex items-start gap-6">
+            <div class={`flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} border border-white/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+              <feature.icon size={28} className={feature.accent} strokeWidth={1.5} />
+            </div>
+            
+            <div>
+              <h3 class="text-2xl font-display font-bold mb-3 text-gray-100 group-hover:text-white transition-colors">{feature.title}</h3>
+              <p class="text-gray-400 leading-relaxed font-light group-hover:text-gray-300">
+                {feature.description}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="group relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:bg-white/10 hover:border-orange-500/30 transition-all duration-300">
-        <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-orange-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none"></div>
-        <div class="flex items-start gap-5">
-          <div class="flex-shrink-0 w-14 h-14 bg-orange-500/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform border border-orange-500/20">
-            <svg class="w-7 h-7 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-          </div>
-          <div class="flex-1 relative z-10">
-            <h3 data-i18n="features.tooComplicated.title" class="text-xl font-bold text-white mb-3">Traditional note apps are too complicated</h3>
-            <p data-i18n="features.tooComplicated.description" class="text-slate-400 leading-relaxed">
-              Stop wasting time organizing folders, creating tags, or searching through hundreds of notes. AI Notes understands context automatically—just ask and it finds what you need.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="group relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:bg-white/10 hover:border-purple-500/30 transition-all duration-300">
-         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none"></div>
-        <div class="flex items-start gap-5">
-          <div class="flex-shrink-0 w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform border border-purple-500/20">
-            <svg class="w-7 h-7 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-          </div>
-          <div class="flex-1 relative z-10">
-            <h3 data-i18n="features.dataOwnership.title" class="text-xl font-bold text-white mb-3">Your data stays yours</h3>
-            <p data-i18n="features.dataOwnership.description" class="text-slate-400 leading-relaxed">
-              Self-host on your own server and keep complete control over your data. No cloud dependency, no vendor lock-in, no privacy concerns. Your knowledge stays private.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div class="group relative bg-white/5 backdrop-blur-xl rounded-3xl p-8 border border-white/10 hover:bg-white/10 hover:border-green-500/30 transition-all duration-300">
-         <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-green-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl pointer-events-none"></div>
-        <div class="flex items-start gap-5">
-          <div class="flex-shrink-0 w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform border border-green-500/20">
-            <svg class="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-            </svg>
-          </div>
-          <div class="flex-1 relative z-10">
-            <h3 data-i18n="features.customizable.title" class="text-xl font-bold text-white mb-3">Fully customizable and extensible</h3>
-            <p data-i18n="features.customizable.description" class="text-slate-400 leading-relaxed">
-              Open source means you can modify, extend, and adapt AI Notes to your needs. Add features, integrate with your tools, or contribute back to the community.
-            </p>
-          </div>
-        </div>
-      </div>
+      ))}
     </div>
   </div>
 </section>
