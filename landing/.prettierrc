@@ -1,0 +1,37 @@
+{
+    "semi": true,
+    "tabWidth": 2,
+    "printWidth": 200,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "endOfLine": "lf",
+    "htmlWhitespaceSensitivity": "css",
+    "embeddedLanguageFormatting": "auto",
+    "singleAttributePerLine": false,
+    "plugins": [
+        "prettier-plugin-tailwindcss"
+    ],
+    "overrides": [
+        {
+            "files": "*.html",
+            "options": {
+                "parser": "html",
+                "tabWidth": 2,
+                "printWidth": 200,
+                "singleAttributePerLine": false
+            }
+        },
+        {
+            "files": [
+                "*.jsx",
+                "*.tsx"
+            ],
+            "options": {
+                "printWidth": 200,
+                "singleAttributePerLine": false
+            }
+        }
+    ]
+}
