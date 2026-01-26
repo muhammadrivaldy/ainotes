@@ -1,146 +1,80 @@
 ---
-/*
-    AI Notes Landing Page - Open-source landing page template
-    Copyright (C) 2026 AI Notes
-*/
+import { Folder, Hash, Cloud, Lock, MessageSquare, Brain, Server, Github } from 'lucide-react';
+
+const comparisons = [
+  {
+    category: "Organization",
+    traditional: { icon: Folder, text: "Organize into folders" },
+    ainotes: { icon: MessageSquare, text: "Just talk naturally" }
+  },
+  {
+    category: "Context",
+    traditional: { icon: Hash, text: "Remember to add tags" },
+    ainotes: { icon: Brain, text: "AI understands context" }
+  },
+  {
+    category: "Privacy",
+    traditional: { icon: Cloud, text: "Data stored on servers" },
+    ainotes: { icon: Server, text: "Self-host your data" }
+  },
+  {
+    category: "Control",
+    traditional: { icon: Lock, text: "Vendor lock-in" },
+    ainotes: { icon: Github, text: "Open source" }
+  }
+];
 ---
 
-<section class="py-24 relative overflow-hidden bg-slate-950">
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="text-center mb-16">
-      <h3 data-i18n="benefits.comparison.title" class="text-3xl font-bold text-white">The Difference</h3>
+<section class="py-24 relative bg-black border-t border-white/5">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="text-center mb-20">
+      <h2 class="text-4xl md:text-5xl font-display font-bold mb-6">The Difference</h2>
     </div>
-    
-    <div class="max-w-5xl mx-auto relative px-4">
-      <!-- Central Line (Desktop) -->
-      <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/50 to-transparent -translate-x-1/2"></div>
 
-      <!-- Headers (Desktop) -->
-      <div class="hidden md:grid grid-cols-2 gap-24 mb-12 relative">
-        <div class="text-right">
-          <h4 data-i18n="benefits.comparison.traditional.title" class="text-xl font-bold text-slate-300">Traditional Apps</h4>
-        </div>
-        <div class="text-left">
-          <h4 data-i18n="benefits.comparison.aiNotes.title" class="text-xl font-bold text-white">AI Notes</h4>
-        </div>
+    <div class="relative">
+      <!-- Center Line (Desktop) -->
+      <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent -translate-x-1/2"></div>
+
+      <!-- Headers -->
+      <div class="hidden md:grid grid-cols-2 gap-24 mb-12 text-lg font-bold font-display tracking-wide">
+        <div class="text-right text-gray-500">Traditional Apps</div>
+        <div class="text-left text-primary">AI Notes</div>
       </div>
 
-      <!-- Feature Rows -->
-      <div class="space-y-12 md:space-y-16">
-        
-        <!-- Row 1: Organization -->
-        <div class="relative grid md:grid-cols-2 gap-8 md:gap-24 items-center group">
-          <!-- Center Icon -->
-          <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-slate-900 border border-blue-500/30 rounded-full items-center justify-center z-10 shadow-lg shadow-blue-500/10 group-hover:scale-110 group-hover:border-blue-500/60 transition-all duration-300">
-             <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-             </svg>
-          </div>
+      <div class="space-y-12">
+        {comparisons.map((item) => (
+          <div class="relative grid md:grid-cols-2 gap-6 md:gap-24 items-center group">
+            
+            <!-- Mobile Category Label -->
+            <div class="md:hidden text-center mb-2">
+              <span class="text-xs font-mono text-gray-500 uppercase tracking-widest">{item.category}</span>
+            </div>
 
-          <!-- Mobile Header -->
-          <div class="md:hidden text-center mb-4">
-            <span data-i18n="benefits.comparison.features.0" class="text-sm font-bold text-blue-400 uppercase tracking-wider">Organization</span>
-          </div>
+            <!-- Traditional -->
+            <div class="text-center md:text-right p-6 md:p-0 rounded-2xl bg-white/5 md:bg-transparent border border-white/5 md:border-0">
+              <div class="md:hidden text-xs font-bold text-gray-500 mb-2 uppercase">Traditional</div>
+              <div class="flex items-center justify-center md:justify-end gap-3 text-gray-500 line-through decoration-gray-700">
+                <span class="font-light">{item.traditional.text}</span>
+                <item.traditional.icon size={20} className="hidden md:block opacity-50" />
+              </div>
+            </div>
 
-          <!-- Left (Traditional) -->
-          <div class="text-center md:text-right p-6 rounded-2xl bg-white/[0.02] border border-white/5 md:bg-transparent md:border-0 md:p-0">
-             <div class="md:hidden text-xs font-bold text-slate-400 mb-2 uppercase">Traditional</div>
-             <p data-i18n="benefits.comparison.traditional.item0" class="text-slate-400 line-through decoration-slate-600">Organize into folders</p>
-          </div>
+            <!-- VS Icon (Center) -->
+            <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black border border-white/10 items-center justify-center z-10 text-[10px] font-mono text-gray-600">
+              VS
+            </div>
 
-          <!-- Right (AI Notes) -->
-          <div class="text-center md:text-left p-6 rounded-2xl bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 md:bg-none md:border-0 md:p-0 relative">
-             <div class="md:hidden text-xs font-bold text-blue-400 mb-2 uppercase">AI Notes</div>
-             <p data-i18n="benefits.comparison.aiNotes.item0" class="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Just talk naturally</p>
-             <!-- Glow effect for desktop right side -->
-             <div class="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-[1px] bg-gradient-to-r from-blue-500/50 to-transparent"></div>
-          </div>
-        </div>
+            <!-- AI Notes -->
+            <div class="text-center md:text-left p-6 md:p-0 rounded-2xl bg-primary/5 md:bg-transparent border border-primary/10 md:border-0">
+              <div class="md:hidden text-xs font-bold text-primary mb-2 uppercase">AI Notes</div>
+              <div class="flex items-center justify-center md:justify-start gap-3 text-white group-hover:text-primary transition-colors">
+                <item.ainotes.icon size={20} className="hidden md:block" />
+                <span class="font-medium text-lg">{item.ainotes.text}</span>
+              </div>
+            </div>
 
-        <!-- Row 2: Context -->
-        <div class="relative grid md:grid-cols-2 gap-8 md:gap-24 items-center group">
-          <!-- Center Icon -->
-           <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-slate-900 border border-blue-500/30 rounded-full items-center justify-center z-10 shadow-lg shadow-blue-500/10 group-hover:scale-110 group-hover:border-blue-500/60 transition-all duration-300">
-             <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-             </svg>
           </div>
-
-          <!-- Mobile Header -->
-          <div class="md:hidden text-center mb-4">
-            <span data-i18n="benefits.comparison.features.1" class="text-sm font-bold text-blue-400 uppercase tracking-wider">Context</span>
-          </div>
-
-           <!-- Left (Traditional) -->
-          <div class="text-center md:text-right p-6 rounded-2xl bg-white/[0.02] border border-white/5 md:bg-transparent md:border-0 md:p-0">
-             <div class="md:hidden text-xs font-bold text-slate-400 mb-2 uppercase">Traditional</div>
-             <p data-i18n="benefits.comparison.traditional.item1" class="text-slate-400 line-through decoration-slate-600">Remember to add tags</p>
-          </div>
-
-          <!-- Right (AI Notes) -->
-          <div class="text-center md:text-left p-6 rounded-2xl bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 md:bg-none md:border-0 md:p-0 relative">
-             <div class="md:hidden text-xs font-bold text-blue-400 mb-2 uppercase">AI Notes</div>
-             <p data-i18n="benefits.comparison.aiNotes.item1" class="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">AI understands context</p>
-              <div class="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-[1px] bg-gradient-to-r from-blue-500/50 to-transparent"></div>
-          </div>
-        </div>
-
-        <!-- Row 3: Data Privacy -->
-        <div class="relative grid md:grid-cols-2 gap-8 md:gap-24 items-center group">
-          <!-- Center Icon -->
-          <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-slate-900 border border-blue-500/30 rounded-full items-center justify-center z-10 shadow-lg shadow-blue-500/10 group-hover:scale-110 group-hover:border-blue-500/60 transition-all duration-300">
-             <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-             </svg>
-          </div>
-
-          <!-- Mobile Header -->
-           <div class="md:hidden text-center mb-4">
-            <span data-i18n="benefits.comparison.features.2" class="text-sm font-bold text-blue-400 uppercase tracking-wider">Data Privacy</span>
-          </div>
-
-           <!-- Left (Traditional) -->
-          <div class="text-center md:text-right p-6 rounded-2xl bg-white/[0.02] border border-white/5 md:bg-transparent md:border-0 md:p-0">
-             <div class="md:hidden text-xs font-bold text-slate-400 mb-2 uppercase">Traditional</div>
-             <p data-i18n="benefits.comparison.traditional.item2" class="text-slate-400 line-through decoration-slate-600">Data stored on servers</p>
-          </div>
-
-          <!-- Right (AI Notes) -->
-          <div class="text-center md:text-left p-6 rounded-2xl bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 md:bg-none md:border-0 md:p-0 relative">
-             <div class="md:hidden text-xs font-bold text-blue-400 mb-2 uppercase">AI Notes</div>
-             <p data-i18n="benefits.comparison.aiNotes.item2" class="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Self-host your own data</p>
-              <div class="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-[1px] bg-gradient-to-r from-blue-500/50 to-transparent"></div>
-          </div>
-        </div>
-
-        <!-- Row 4: Control -->
-        <div class="relative grid md:grid-cols-2 gap-8 md:gap-24 items-center group">
-          <!-- Center Icon -->
-          <div class="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-slate-900 border border-blue-500/30 rounded-full items-center justify-center z-10 shadow-lg shadow-blue-500/10 group-hover:scale-110 group-hover:border-blue-500/60 transition-all duration-300">
-             <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-             </svg>
-          </div>
-
-          <!-- Mobile Header -->
-          <div class="md:hidden text-center mb-4">
-            <span data-i18n="benefits.comparison.features.3" class="text-sm font-bold text-blue-400 uppercase tracking-wider">Control</span>
-          </div>
-
-           <!-- Left (Traditional) -->
-          <div class="text-center md:text-right p-6 rounded-2xl bg-white/[0.02] border border-white/5 md:bg-transparent md:border-0 md:p-0">
-             <div class="md:hidden text-xs font-bold text-slate-400 mb-2 uppercase">Traditional</div>
-             <p data-i18n="benefits.comparison.traditional.item3" class="text-slate-400 line-through decoration-slate-600">Vendor lock-in</p>
-          </div>
-
-          <!-- Right (AI Notes) -->
-          <div class="text-center md:text-left p-6 rounded-2xl bg-gradient-to-br from-blue-600/10 to-transparent border border-blue-500/20 md:bg-none md:border-0 md:p-0 relative">
-             <div class="md:hidden text-xs font-bold text-blue-400 mb-2 uppercase">AI Notes</div>
-             <p data-i18n="benefits.comparison.aiNotes.item3" class="text-xl font-medium text-white group-hover:text-blue-300 transition-colors">Open source and customizable</p>
-              <div class="hidden md:block absolute -left-12 top-1/2 -translate-y-1/2 w-8 h-[1px] bg-gradient-to-r from-blue-500/50 to-transparent"></div>
-          </div>
-        </div>
-
+        ))}
       </div>
     </div>
   </div>

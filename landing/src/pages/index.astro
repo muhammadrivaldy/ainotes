@@ -1,46 +1,22 @@
 ---
-/*
-    AI Notes Landing Page - Open-source landing page template
-    Copyright (C) 2026 AI Notes
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
 import Hero from '../components/Hero.astro';
+import HowItWorks from '../components/HowItWorks.astro';
 import Features from '../components/Features.astro';
+import Audience from '../components/Audience.astro';
 import Comparison from '../components/Comparison.astro';
-import Benefits from '../components/Benefits.astro';
-import LifeStreamDemo from '../components/LifeStreamDemo.astro';
-import CTA from '../components/CTA.astro';
 import Footer from '../components/Footer.astro';
-import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 ---
 
-<BaseLayout>
-  <div class="absolute top-4 right-4 z-50">
-      <LanguageSwitcher />
-  </div>
-  <Hero />
-  <Features />
-  <Comparison />
-  <Benefits />
-  <LifeStreamDemo />
-  <CTA />
-  <Footer />
-</BaseLayout>
-
-<script>
-  import '../scripts/i18n';
-</script>
+<Layout title="AI Notes | Your Second Brain, Evolved">
+  <main class="relative overflow-hidden">
+    <Navbar />
+    <Hero />
+    <HowItWorks />
+    <Features />
+    <Audience />
+    <Comparison />
+    <Footer />
+  </main>
+</Layout>
