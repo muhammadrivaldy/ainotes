@@ -43,7 +43,7 @@ export default function MessageBubble({ message, isStreaming = false }) {
 
   // Parse citations from AI response (format: "[Source: filename.pdf, Page X]")
   const parseCitations = (content) => {
-    const citationRegex = /\[Source:\s*([^,\]]+),\s*Page\s*(\d+)\]/g;
+    const citationRegex = /\[Source:\s*(.+?)(?=,\s*page\b),\s*page\s*(\d+)\]/gi;
     const citations = [];
     const seen = new Set();
     let match;
