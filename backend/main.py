@@ -39,6 +39,9 @@ import uvicorn
 
 logger = logging.getLogger(__name__)
 
+# Maximum file size for PDF uploads (50MB by default, configurable via environment)
+MAX_UPLOAD_SIZE = int(os.getenv("MAX_UPLOAD_SIZE", 50 * 1024 * 1024))  # bytes
+
 # Setup Rate Limiter
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="Second Brain AI API")
@@ -201,9 +204,33 @@ async def upload_document(
     file_path = os.path.join(user_upload_dir, safe_filename)
 
     try:
+        # Read and write file in chunks while validating size
+        bytes_read = 0
+        chunk_size = 1024 * 1024  # 1MB chunks
+        size_exceeded = False
+        
         with open(file_path, "wb") as f:
-            contents = await file.read()
-            f.write(contents)
+            while True:
+                chunk = await file.read(chunk_size)
+                if not chunk:
+                    break
+                
+                # Check size before writing to prevent any excess data
+                if bytes_read + len(chunk) > MAX_UPLOAD_SIZE:
+                    size_exceeded = True
+                    break
+                
+                f.write(chunk)
+                bytes_read += len(chunk)
+        
+        # If file size exceeded, clean up and raise error
+        if size_exceeded:
+            os.remove(file_path)
+            max_size_mb = MAX_UPLOAD_SIZE / (1024 * 1024)
+            raise HTTPException(
+                status_code=413,
+                detail=f"File size exceeds maximum allowed size of {max_size_mb:.0f}MB"
+            )
 
         # Process with brain's add_document tool
         user_brain = get_user_brain(current_user.id)
