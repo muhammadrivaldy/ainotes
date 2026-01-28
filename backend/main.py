@@ -194,7 +194,10 @@ async def upload_document(
 
     # Save with timestamp prefix to avoid collisions
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
-    safe_filename = f"{timestamp}_{file.filename}"
+    # Sanitize the original filename to prevent path traversal and invalid characters
+    original_filename = os.path.basename(file.filename)
+    sanitized_filename = re.sub(r'[^A-Za-z0-9._-]', '_', original_filename)
+    safe_filename = f"{timestamp}_{sanitized_filename}"
     file_path = os.path.join(user_upload_dir, safe_filename)
 
     try:
