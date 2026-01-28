@@ -432,7 +432,7 @@ What would you like to do first?"""
             if not results:
                 # Get available tags to help user
                 try:
-                    all_results = vector_store.get(where={"user_id": user_id}, limit=100)
+                    all_results = vector_store.get(where={"user_id": user_id})
                     if all_results and all_results.get('metadatas'):
                         tags = set()
                         for metadata in all_results['metadatas']:
@@ -646,10 +646,9 @@ What would you like to do first?"""
             Results are grouped into Chat Memories and Documents sections.
             """
             try:
-                # Get all documents for this user
+                # Get all documents for this user (no limit to retrieve everything)
                 results = vector_store.get(
-                    where={"user_id": user_id},
-                    limit=1000
+                    where={"user_id": user_id}
                 )
 
                 if not results or not results.get('documents'):
@@ -720,10 +719,9 @@ What would you like to do first?"""
             DO NOT use query_recall for tag-based filtering - always use this tool instead.
             """
             try:
-                # Get all documents for this user with more limit
+                # Get all documents for this user (no limit to retrieve everything)
                 results = vector_store.get(
-                    where={"user_id": user_id},
-                    limit=1000  # Increased limit
+                    where={"user_id": user_id}
                 )
 
                 if not results or not results.get('documents'):
@@ -996,8 +994,7 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
         stats = {"total": 0, "migrated": 0, "already_migrated": 0, "errors": 0}
         try:
             results = self.vector_store.get(
-                where={"user_id": self.user_id},
-                limit=5000
+                where={"user_id": self.user_id}
             )
 
             if not results or not results.get('metadatas'):
