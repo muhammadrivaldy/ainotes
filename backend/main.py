@@ -222,8 +222,7 @@ async def upload_document(
         return DocumentUploadResponse(
             message=result,
             filename=file.filename,
-            chunks_added=chunks_added,
-            file_path=file_path
+            chunks_added=chunks_added
         )
     except HTTPException:
         raise
