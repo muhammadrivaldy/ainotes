@@ -23,6 +23,7 @@ import { Bot, User } from 'lucide-react';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useAuth } from '../../context/AuthContext';
 import TagChips from './TagChips';
+import CitationChips from './CitationChips';
 
 export default function MessageBubble({ message, isStreaming = false }) {
   const { user } = useAuth();
@@ -40,8 +41,32 @@ export default function MessageBubble({ message, isStreaming = false }) {
     return [];
   };
 
+  // Parse citations from AI response (format: "[Source: filename.pdf, Page X]")
+  const parseCitations = (content) => {
+    const citationRegex = /\[Source:\s*(.+?)(?=,\s*page\b),\s*page\s*(\d+)\]/gi;
+    const citations = [];
+    const seen = new Set();
+    let match;
+    while ((match = citationRegex.exec(content)) !== null) {
+      const key = `${match[1].trim()}:${match[2]}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        citations.push({ filename: match[1].trim(), page: match[2] });
+      }
+    }
+    return citations;
+  };
+
+  // Strip citation markers from displayed content
+  const stripCitations = (content) => {
+    return content.replace(/\n*\[Source:\s*[^\]]+\]/g, '').trim();
+  };
+
   const tags = !isUser && message.role === 'assistant' ? parseTags(message.content) : [];
   const showTags = tags.length > 0;
+  const citations = !isUser && message.role === 'assistant' ? parseCitations(message.content) : [];
+  const showCitations = citations.length > 0;
+  const cleanContent = showCitations ? stripCitations(contentToDisplay) : contentToDisplay;
 
   return (
     <div className={`group mb-6 flex w-full items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -59,9 +84,12 @@ export default function MessageBubble({ message, isStreaming = false }) {
           }`}
         >
           <div className={`prose prose-sm max-w-none wrap-break-word ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
-            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{contentToDisplay}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{cleanContent}</ReactMarkdown>
           </div>
         </div>
+
+        {/* Citation chips - shown below AI message bubble for document sources */}
+        <CitationChips citations={citations} visible={showCitations} />
 
         {/* Tag chips - shown below AI message bubble */}
         <TagChips tags={tags} visible={showTags} />

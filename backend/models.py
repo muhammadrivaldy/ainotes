@@ -86,3 +86,8 @@ class UserResponse(BaseModel):
     name: str
     picture: Optional[str] = None
     created_at: datetime
+
+class DocumentUploadResponse(BaseModel):
+    message: str
+    filename: str
+    chunks_added: int

@@ -10,3 +10,5 @@ langchain-chroma
 langgraph
 slowapi
 python-jose[cryptography]
+pypdf
+python-multipart

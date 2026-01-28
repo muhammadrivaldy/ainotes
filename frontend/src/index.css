@@ -22,3 +22,26 @@
   margin-top: 0.5em;
   margin-bottom: 0.5em;
 }
+
+/* Remove extra spacing around lists */
+.prose :where(ul, ol):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Remove paragraph margins inside list items (react-markdown wraps li content in p) */
+.prose ul > li > p,
+.prose ol > li > p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* Remove excessive heading top margin */
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+  margin-top: 0;
+}

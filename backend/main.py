@@ -14,7 +14,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-from fastapi import FastAPI, HTTPException, Depends, Request
+import os
+import re
+import logging
+from datetime import datetime, timezone
+
+from fastapi import FastAPI, HTTPException, Depends, Request, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
 from typing import List
@@ -25,12 +30,14 @@ from slowapi.errors import RateLimitExceeded
 from models import (
     ChatRequest, ChatResponse, ChatMessage, Message,
     GoogleAuthRequest, AuthResponse, UserResponse, User, Suggestion,
-    Tag, TaggedItem
+    Tag, TaggedItem, DocumentUploadResponse
 )
 from database import create_db_and_tables, get_session, get_or_create_user
 from auth import create_access_token, decode_google_token, get_current_user
-from brain import SecondBrain
+from brain import SecondBrain, UPLOADS_DIR
 import uvicorn
+
+logger = logging.getLogger(__name__)
 
 # Setup Rate Limiter
 limiter = Limiter(key_func=get_remote_address)
@@ -169,6 +176,80 @@ async def regenerate_tags(
     user_brain = get_user_brain(current_user.id)
     count = user_brain.regenerate_all_tags()
     return {"message": f"Regenerated tags for {count} items", "count": count}
+
+@app.post("/documents/upload", response_model=DocumentUploadResponse)
+@limiter.limit("5/minute")
+async def upload_document(
+    request: Request,
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    """Upload a PDF document and index it into the knowledge base."""
+    if not file.filename or not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are supported")
+
+    # Create user-specific upload directory
+    user_upload_dir = os.path.join(UPLOADS_DIR, str(current_user.id))
+    os.makedirs(user_upload_dir, exist_ok=True)
+
+    # Save with timestamp prefix to avoid collisions
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    # Sanitize the original filename to prevent path traversal and invalid characters
+    original_filename = os.path.basename(file.filename)
+    sanitized_filename = re.sub(r'[^A-Za-z0-9._-]', '_', original_filename)
+    safe_filename = f"{timestamp}_{sanitized_filename}"
+    file_path = os.path.join(user_upload_dir, safe_filename)
+
+    try:
+        with open(file_path, "wb") as f:
+            contents = await file.read()
+            f.write(contents)
+
+        # Process with brain's add_document tool
+        user_brain = get_user_brain(current_user.id)
+
+        # Call the add_document tool function directly
+        add_doc_tool = next((t for t in user_brain.tools if t.name == "add_document"), None)
+        if not add_doc_tool:
+            raise HTTPException(status_code=500, detail="Document processing tool not available")
+
+        result = add_doc_tool.func(file_path=file_path)
+
+        # Parse chunks_added from result
+        chunks_added = 0
+        if "chunks added" in result:
+            match = re.search(r'(\d+) chunks added', result)
+            if match:
+                chunks_added = int(match.group(1))
+
+        return DocumentUploadResponse(
+            message=result,
+            filename=file.filename,
+            chunks_added=chunks_added
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error uploading document: {e}")
+        # Clean up partial file on error
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to process document. Please try again later."
+        )
+
+@app.post("/knowledge/migrate")
+async def migrate_knowledge(
+    current_user: User = Depends(get_current_user)
+):
+    """Migrate legacy metadata to the new knowledge schema. Safe to run multiple times."""
+    user_brain = get_user_brain(current_user.id)
+    stats = user_brain.migrate_legacy_metadata()
+    return {
+        "message": f"Migration complete: {stats['migrated']} items migrated",
+        "stats": stats
+    }
 
 @app.post("/chat", response_model=ChatResponse)
 @limiter.limit("5/minute")
