@@ -687,8 +687,28 @@ What would you like to do first?"""
                 if doc_chunks:
                     doc_summaries = []
                     for filename, info in sorted(doc_chunks.items()):
-                        pages = sorted(info["pages"], key=lambda x: int(x) if x.isdigit() else 0)
-                        page_range = f"pages {pages[0]}-{pages[-1]}" if len(pages) > 1 else f"page {pages[0]}"
+                        # Separate numeric page labels from non-numeric ones to avoid misleading ranges
+                        numeric_pages = sorted(
+                            int(p) for p in info["pages"]
+                            if isinstance(p, str) and p.isdigit()
+                        )
+                        if numeric_pages:
+                            # Use a numeric range when we have valid numeric pages
+                            if len(numeric_pages) > 1:
+                                page_range = f"pages {numeric_pages[0]}-{numeric_pages[-1]}"
+                            else:
+                                page_range = f"page {numeric_pages[0]}"
+                        else:
+                            # Fallback: use the raw page labels without inventing a numeric range
+                            display_pages = sorted(
+                                str(p) for p in info["pages"] if p is not None
+                            )
+                            if not display_pages:
+                                page_range = "pages (unknown)"
+                            elif len(display_pages) == 1:
+                                page_range = f"page {display_pages[0]}"
+                            else:
+                                page_range = "pages " + ", ".join(display_pages)
                         doc_summaries.append(f"• **{filename}** — {info['count']} chunks, {page_range}")
                     sections.append(f"### Documents ({len(doc_chunks)})\n\n" + "\n".join(doc_summaries))
 
