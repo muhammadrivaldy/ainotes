@@ -181,11 +181,15 @@ def is_valid_pdf(file_path: str) -> bool:
     """Validate that a file is a valid PDF by checking for PDF magic bytes."""
     try:
         with open(file_path, "rb") as f:
-            # Read first 4 bytes to check for PDF signature
-            header = f.read(4)
-            # PDF files start with %PDF (0x25 0x50 0x44 0x46)
-            return header == b'%PDF'
-    except Exception:
+            # Read first 5 bytes to check for PDF signature
+            header = f.read(5)
+            # PDF files start with %PDF- (e.g., %PDF-1.4, %PDF-1.7)
+            return header.startswith(b'%PDF-')
+    except (IOError, OSError) as e:
+        logger.error(f"Error validating PDF file {file_path}: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error validating PDF file {file_path}: {e}")
         return False
 
 @app.post("/documents/upload", response_model=DocumentUploadResponse)
@@ -218,7 +222,11 @@ async def upload_document(
 
         # Validate that the uploaded file is actually a PDF
         if not is_valid_pdf(file_path):
-            os.remove(file_path)
+            # Clean up invalid file
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                logger.error(f"Failed to remove invalid PDF file {file_path}: {e}")
             raise HTTPException(
                 status_code=400,
                 detail="Invalid PDF file. The file does not contain valid PDF content."
