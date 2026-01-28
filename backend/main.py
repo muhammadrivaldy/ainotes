@@ -207,6 +207,7 @@ async def upload_document(
         # Read and write file in chunks while validating size
         bytes_read = 0
         chunk_size = 1024 * 1024  # 1MB chunks
+        size_exceeded = False
         
         with open(file_path, "wb") as f:
             while True:
@@ -214,18 +215,22 @@ async def upload_document(
                 if not chunk:
                     break
                 
-                bytes_read += len(chunk)
-                if bytes_read > MAX_UPLOAD_SIZE:
-                    # Clean up partial file
-                    f.close()
-                    os.remove(file_path)
-                    max_size_mb = MAX_UPLOAD_SIZE / (1024 * 1024)
-                    raise HTTPException(
-                        status_code=413,
-                        detail=f"File size exceeds maximum allowed size of {max_size_mb:.0f}MB"
-                    )
+                # Check size before writing to prevent any excess data
+                if bytes_read + len(chunk) > MAX_UPLOAD_SIZE:
+                    size_exceeded = True
+                    break
                 
                 f.write(chunk)
+                bytes_read += len(chunk)
+        
+        # If file size exceeded, clean up and raise error
+        if size_exceeded:
+            os.remove(file_path)
+            max_size_mb = MAX_UPLOAD_SIZE / (1024 * 1024)
+            raise HTTPException(
+                status_code=413,
+                detail=f"File size exceeds maximum allowed size of {max_size_mb:.0f}MB"
+            )
 
         # Process with brain's add_document tool
         user_brain = get_user_brain(current_user.id)
