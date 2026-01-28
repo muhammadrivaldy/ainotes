@@ -425,8 +425,12 @@ What would you like to do first?"""
 
             if not results:
                 # Get available tags to help user
+                # Use a reasonable limit for tag collection
                 try:
-                    all_results = vector_store.get(where={"user_id": user_id})
+                    all_results = vector_store.get(
+                        where={"user_id": user_id},
+                        limit=5000
+                    )
                     if all_results and all_results.get('metadatas'):
                         tags = set()
                         for metadata in all_results['metadatas']:
@@ -640,9 +644,12 @@ What would you like to do first?"""
             Results are grouped into Chat Memories and Documents sections.
             """
             try:
-                # Get all documents for this user (no limit to retrieve everything)
+                # Get all documents for this user
+                # Use a high limit to accommodate large knowledge bases
+                # If you have more than 10000 items, consider implementing pagination
                 results = vector_store.get(
-                    where={"user_id": user_id}
+                    where={"user_id": user_id},
+                    limit=10000
                 )
 
                 if not results or not results.get('documents'):
@@ -653,6 +660,10 @@ What would you like to do first?"""
 
                 if len(documents) == 0:
                     return "You don't have any saved information yet."
+                
+                # Warn if we hit the limit
+                if len(documents) == 10000:
+                    logger.warning(f"User {user_id} has reached the 10000 item limit in get_all_knowledge")
 
                 # Group by source type
                 chat_memories = []
@@ -713,9 +724,11 @@ What would you like to do first?"""
             DO NOT use query_recall for tag-based filtering - always use this tool instead.
             """
             try:
-                # Get all documents for this user (no limit to retrieve everything)
+                # Get all documents for this user
+                # Use a high limit to accommodate large knowledge bases
                 results = vector_store.get(
-                    where={"user_id": user_id}
+                    where={"user_id": user_id},
+                    limit=10000
                 )
 
                 if not results or not results.get('documents'):
@@ -984,41 +997,62 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
         Migrate existing items that lack source_type metadata to the new schema.
         Adds default values: source_type="chat", source="user", etc.
         Safe to run multiple times — skips already-migrated items.
+        Uses batch processing to handle large knowledge bases efficiently.
         """
         stats = {"total": 0, "migrated": 0, "already_migrated": 0, "errors": 0}
+        batch_size = 5000
+        offset = 0
+        
         try:
-            results = self.vector_store.get(
-                where={"user_id": self.user_id}
-            )
+            while True:
+                # Process in batches to avoid memory issues
+                results = self.vector_store.get(
+                    where={"user_id": self.user_id},
+                    limit=batch_size,
+                    offset=offset
+                )
 
-            if not results or not results.get('metadatas'):
-                return stats
+                if not results or not results.get('metadatas'):
+                    break
+                
+                batch_count = len(results['metadatas'])
+                if batch_count == 0:
+                    break
 
-            for i, metadata in enumerate(results['metadatas']):
-                stats["total"] += 1
+                for i, metadata in enumerate(results['metadatas']):
+                    stats["total"] += 1
 
-                if metadata.get("source_type"):
-                    stats["already_migrated"] += 1
-                    continue
+                    if metadata.get("source_type"):
+                        stats["already_migrated"] += 1
+                        continue
 
-                try:
-                    doc_id = results['ids'][i]
-                    updated_metadata = {
-                        **metadata,
-                        "source_type": "chat",
-                        "source": "user",
-                        "source_path": "",
-                        "page": "",
-                        "created_at": datetime.now(timezone.utc).isoformat()
-                    }
-                    self.vector_store._collection.update(
-                        ids=[doc_id],
-                        metadatas=[updated_metadata]
-                    )
-                    stats["migrated"] += 1
-                except Exception as e:
-                    logger.error(f"Error migrating item {i}: {e}")
-                    stats["errors"] += 1
+                    try:
+                        doc_id = results['ids'][i]
+                        updated_metadata = {
+                            **metadata,
+                            "source_type": "chat",
+                            "source": "user",
+                            "source_path": "",
+                            "page": "",
+                            "created_at": datetime.now(timezone.utc).isoformat()
+                        }
+                        self.vector_store._collection.update(
+                            ids=[doc_id],
+                            metadatas=[updated_metadata]
+                        )
+                        stats["migrated"] += 1
+                    except Exception as e:
+                        logger.error(f"Error migrating item {i}: {e}")
+                        stats["errors"] += 1
+                
+                # Move to next batch
+                offset += batch_size
+                
+                # If we got fewer results than batch_size, we're done
+                if batch_count < batch_size:
+                    break
+                    
+                logger.info(f"Migration progress: {stats['total']} items processed, {stats['migrated']} migrated")
 
         except Exception as e:
             logger.error(f"Error in migrate_legacy_metadata: {e}")
