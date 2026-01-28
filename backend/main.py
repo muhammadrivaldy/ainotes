@@ -39,8 +39,8 @@ import uvicorn
 
 logger = logging.getLogger(__name__)
 
-# Maximum file size for PDF uploads (50MB)
-MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50MB in bytes
+# Maximum file size for PDF uploads (50MB by default, configurable via environment)
+MAX_UPLOAD_SIZE = int(os.getenv("MAX_UPLOAD_SIZE", 50 * 1024 * 1024))  # bytes
 
 # Setup Rate Limiter
 limiter = Limiter(key_func=get_remote_address)
@@ -191,18 +191,6 @@ async def upload_document(
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
 
-    # Validate file size to prevent DoS attacks
-    file.file.seek(0, 2)  # Seek to end of file
-    file_size = file.file.tell()  # Get current position (file size)
-    file.file.seek(0)  # Reset file pointer to beginning
-    
-    if file_size > MAX_UPLOAD_SIZE:
-        max_size_mb = MAX_UPLOAD_SIZE / (1024 * 1024)
-        raise HTTPException(
-            status_code=413,
-            detail=f"File size exceeds maximum allowed size of {max_size_mb:.0f}MB"
-        )
-
     # Create user-specific upload directory
     user_upload_dir = os.path.join(UPLOADS_DIR, str(current_user.id))
     os.makedirs(user_upload_dir, exist_ok=True)
@@ -216,9 +204,28 @@ async def upload_document(
     file_path = os.path.join(user_upload_dir, safe_filename)
 
     try:
+        # Read and write file in chunks while validating size
+        bytes_read = 0
+        chunk_size = 1024 * 1024  # 1MB chunks
+        
         with open(file_path, "wb") as f:
-            contents = await file.read()
-            f.write(contents)
+            while True:
+                chunk = await file.read(chunk_size)
+                if not chunk:
+                    break
+                
+                bytes_read += len(chunk)
+                if bytes_read > MAX_UPLOAD_SIZE:
+                    # Clean up partial file
+                    f.close()
+                    os.remove(file_path)
+                    max_size_mb = MAX_UPLOAD_SIZE / (1024 * 1024)
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"File size exceeds maximum allowed size of {max_size_mb:.0f}MB"
+                    )
+                
+                f.write(chunk)
 
         # Process with brain's add_document tool
         user_brain = get_user_brain(current_user.id)
