@@ -232,7 +232,10 @@ async def upload_document(
         # Clean up partial file on error
         if os.path.exists(file_path):
             os.remove(file_path)
-        raise HTTPException(status_code=500, detail=f"Failed to process document: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="Failed to process document. Please try again later."
+        )
 
 @app.post("/knowledge/migrate")
 async def migrate_knowledge(
