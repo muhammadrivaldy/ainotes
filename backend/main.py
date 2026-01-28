@@ -177,6 +177,17 @@ async def regenerate_tags(
     count = user_brain.regenerate_all_tags()
     return {"message": f"Regenerated tags for {count} items", "count": count}
 
+def is_valid_pdf(file_path: str) -> bool:
+    """Validate that a file is a valid PDF by checking for PDF magic bytes."""
+    try:
+        with open(file_path, "rb") as f:
+            # Read first 4 bytes to check for PDF signature
+            header = f.read(4)
+            # PDF files start with %PDF (0x25 0x50 0x44 0x46)
+            return header == b'%PDF'
+    except Exception:
+        return False
+
 @app.post("/documents/upload", response_model=DocumentUploadResponse)
 @limiter.limit("5/minute")
 async def upload_document(
@@ -204,6 +215,14 @@ async def upload_document(
         with open(file_path, "wb") as f:
             contents = await file.read()
             f.write(contents)
+
+        # Validate that the uploaded file is actually a PDF
+        if not is_valid_pdf(file_path):
+            os.remove(file_path)
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid PDF file. The file does not contain valid PDF content."
+            )
 
         # Process with brain's add_document tool
         user_brain = get_user_brain(current_user.id)
