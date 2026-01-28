@@ -39,6 +39,9 @@ import uvicorn
 
 logger = logging.getLogger(__name__)
 
+# Maximum file size for PDF uploads (50MB)
+MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50MB in bytes
+
 # Setup Rate Limiter
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI(title="Second Brain AI API")
@@ -187,6 +190,18 @@ async def upload_document(
     """Upload a PDF document and index it into the knowledge base."""
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
+
+    # Validate file size to prevent DoS attacks
+    file.file.seek(0, 2)  # Seek to end of file
+    file_size = file.file.tell()  # Get current position (file size)
+    file.file.seek(0)  # Reset file pointer to beginning
+    
+    if file_size > MAX_UPLOAD_SIZE:
+        max_size_mb = MAX_UPLOAD_SIZE / (1024 * 1024)
+        raise HTTPException(
+            status_code=413,
+            detail=f"File size exceeds maximum allowed size of {max_size_mb:.0f}MB"
+        )
 
     # Create user-specific upload directory
     user_upload_dir = os.path.join(UPLOADS_DIR, str(current_user.id))
