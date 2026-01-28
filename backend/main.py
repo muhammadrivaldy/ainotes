@@ -178,7 +178,9 @@ async def regenerate_tags(
     return {"message": f"Regenerated tags for {count} items", "count": count}
 
 @app.post("/documents/upload", response_model=DocumentUploadResponse)
+@limiter.limit("5/minute")
 async def upload_document(
+    request: Request,
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user)
 ):
