@@ -392,6 +392,12 @@ What would you like to do first?"""
                         words = paragraph.split()
                         current_chunk = ""
                         for word in words:
+                            # Handle words that exceed chunk_size
+                            if len(word) > chunk_size:
+                                # Log warning about data truncation
+                                logger.warning(f"Word exceeds chunk_size ({len(word)} > {chunk_size}), truncating: {word[:50]}...")
+                                word = word[:chunk_size]
+                            
                             if len(current_chunk) + len(word) + 1 <= chunk_size:
                                 current_chunk += (" " if current_chunk else "") + word
                             else:
