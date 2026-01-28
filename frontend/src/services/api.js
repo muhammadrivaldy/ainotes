@@ -196,7 +196,7 @@ export const checkHealth = async () => {
 /**
  * Upload a PDF document to the knowledge base
  * @param {File} file - The PDF file to upload
- * @returns {Promise<{message: string, filename: string, chunks_added: number, file_path: string}>}
+ * @returns {Promise<{message: string, filename: string, chunks_added: number}>}
  */
 export const uploadDocument = async (file) => {
   const formData = new FormData();

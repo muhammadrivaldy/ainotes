@@ -91,4 +91,3 @@ class DocumentUploadResponse(BaseModel):
     message: str
     filename: str
     chunks_added: int
-    file_path: str
