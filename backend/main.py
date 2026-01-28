@@ -177,6 +177,21 @@ async def regenerate_tags(
     count = user_brain.regenerate_all_tags()
     return {"message": f"Regenerated tags for {count} items", "count": count}
 
+def is_valid_pdf(file_path: str) -> bool:
+    """Validate that a file is a valid PDF by checking for PDF magic bytes."""
+    try:
+        with open(file_path, "rb") as f:
+            # Read first 5 bytes to check for PDF signature
+            header = f.read(5)
+            # PDF files start with %PDF- (e.g., %PDF-1.4, %PDF-1.7)
+            return header.startswith(b'%PDF-')
+    except (IOError, OSError) as e:
+        logger.error(f"Error validating PDF file {file_path}: {e}")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error validating PDF file {file_path}: {e}")
+        return False
+
 @app.post("/documents/upload", response_model=DocumentUploadResponse)
 @limiter.limit("5/minute")
 async def upload_document(
@@ -204,6 +219,18 @@ async def upload_document(
         with open(file_path, "wb") as f:
             contents = await file.read()
             f.write(contents)
+
+        # Validate that the uploaded file is actually a PDF
+        if not is_valid_pdf(file_path):
+            # Clean up invalid file
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                logger.error(f"Failed to remove invalid PDF file {file_path}: {e}")
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid PDF file. The file does not contain valid PDF content."
+            )
 
         # Process with brain's add_document tool
         user_brain = get_user_brain(current_user.id)
