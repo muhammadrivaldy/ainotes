@@ -105,7 +105,14 @@ export default function InputArea({ onSend, onClear, onLocalMessage, disabled, v
         </button>
 
         {/* Hidden file input */}
-        <input ref={fileInputRef} type="file" accept=".pdf" className="hidden" onChange={handleFileUpload} />
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".pdf"
+          className="hidden"
+          onChange={handleFileUpload}
+          aria-label="Upload PDF document"
+        />
 
         {/* Send Button */}
         <button
