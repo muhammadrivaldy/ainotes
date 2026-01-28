@@ -194,6 +194,26 @@ export const checkHealth = async () => {
 };
 
 /**
+ * Upload a PDF document to the knowledge base
+ * @param {File} file - The PDF file to upload
+ * @returns {Promise<{message: string, filename: string, chunks_added: number, file_path: string}>}
+ */
+export const uploadDocument = async (file) => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/documents/upload`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${getToken()}`
+    },
+    body: formData
+  });
+
+  return handleResponse(response);
+};
+
+/**
  * Logout - clear all auth data
  */
 export const logout = () => {

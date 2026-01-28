@@ -20,14 +20,18 @@ A FastAPI-based "Second Brain" API that stores and retrieves information using v
 - **Per-User Data Isolation** - Each user has their own chat history and knowledge base
 - **Smart Help System** - Automatically detects confused users and provides comprehensive guidance with examples
 - **Natural Language Storage** - Save information through conversational statements
+- **Document Upload** - Upload PDF files that get indexed into the knowledge base
+- **Source Citations** - Responses from documents include filename and page number citations
+- **Cross-Source Synthesis** - Combines insights from chat memories and uploaded documents
 - **Semantic Search** - Query stored knowledge with intelligent similarity matching
 - **Memory Deletion** - Remove specific memories by describing the content
 - **Vector Embeddings** - Uses OpenAI embeddings for accurate semantic understanding
 - **Persistent Storage** - ChromaDB for vector storage and SQLite for chat history
 - **Rate Limiting** - Built-in API rate limiting (5 requests/minute)
 - **CORS Support** - Pre-configured for frontend integration
-- **LangGraph Agent** - Intelligent tool selection and routing
+- **LangGraph Agent** - Intelligent tool selection and routing with 8 specialized tools
 - **Security Guards** - Prompt injection protection
+- **Backward Compatible Migration** - Existing notes automatically migrate to the new schema
 
 ## Technology Stack
 
@@ -158,6 +162,28 @@ Adjust rate limits in `main.py`:
 async def chat_endpoint(...):
 ```
 
+## Knowledge Sources
+
+The knowledge base supports two types of information sources:
+
+- **Chat Memories** (`source_type: "chat"`) — Information the user tells the assistant to remember. Stored with tags, attributed to the user, and returned without citations.
+- **Documents** (`source_type: "document"`) — Uploaded PDF files that are extracted page-by-page, chunked at paragraph boundaries (~1000 chars), and stored with source filename and page number. When retrieved, responses include `[Source: filename.pdf, Page X]` citations.
+
+Both source types share the same ChromaDB collection and are queried together via semantic search, enabling cross-source synthesis.
+
+### Upload Flow
+
+1. User uploads a PDF via `POST /documents/upload`
+2. File is saved to `database/uploads/{user_id}/` with a timestamp prefix
+3. `PyPDFLoader` extracts text page-by-page
+4. Each page is split into ~1000 char chunks at paragraph boundaries
+5. Document-level tags are auto-generated from filename and first-page content
+6. All chunks are stored with full attribution metadata
+
+### Migration
+
+Existing notes without `source_type` metadata can be migrated via `POST /knowledge/migrate`. This is idempotent and safe to run multiple times.
+
 ## Smart Help System
 
 The AI automatically detects when users are confused and provides comprehensive help with examples. This feature enhances user experience by proactively guiding users who may not understand the system's capabilities.
@@ -181,16 +207,17 @@ The AI automatically detects when users are confused and provides comprehensive 
 ### Help Content Structure
 
 The help response includes:
-- Brief introduction to the Second Brain concept
-- 7 core capabilities with concrete examples:
+- Brief introduction to the Knowledge Assistant concept
+- 8 core capabilities with concrete examples:
   1. Save information (with auto-tagging)
-  2. Retrieve specific information (semantic search)
-  3. Search by meaning (context understanding)
-  4. Manage tags (auto-cleanup)
-  5. Filter by tag (category filtering)
-  6. Delete information (removal by description)
-  7. See everything (broad overview)
-- Pro tips about privacy, auto-tagging, and semantic search
+  2. Retrieve specific information (semantic search across all sources)
+  3. Upload documents (PDF indexing and knowledge extraction)
+  4. Search by meaning (context understanding across chat + documents)
+  5. Manage tags (auto-cleanup)
+  6. Filter by tag (category filtering)
+  7. Delete information (removal by description)
+  8. See everything (grouped overview by source type)
+- Pro tips about privacy, auto-tagging, source citations, and semantic search
 - Call-to-action encouraging user engagement
 
 ### Logging
@@ -233,6 +260,11 @@ The API uses JWT-based authentication with Google OAuth:
 | `/chat` | POST | Yes | Send message (rate limited: 5/min) |
 | `/history` | GET | Yes | Get user's chat history |
 | `/history` | DELETE | Yes | Clear user's chat history |
+| `/tags` | GET | Yes | Get all tags with counts |
+| `/tags/{tag}/items` | GET | Yes | Get items by tag |
+| `/tags/regenerate` | POST | Yes | Regenerate missing tags |
+| `/documents/upload` | POST | Yes | Upload PDF for knowledge indexing |
+| `/knowledge/migrate` | POST | Yes | Migrate legacy metadata (idempotent) |
 
 ## License
 

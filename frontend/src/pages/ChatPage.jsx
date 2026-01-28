@@ -147,7 +147,7 @@ export default function ChatPage() {
   return (
     <AppLayout>
       <StreamFeed messages={messages} streamingMessageId={streamingMessageId} />
-      <InputArea onSend={handleSend} onClear={handleClear} value={inputValue} onChange={setInputValue} />
+      <InputArea onSend={handleSend} onClear={handleClear} onLocalMessage={(content) => setMessages((prev) => [...prev, { id: Date.now(), role: 'ai', content }])} value={inputValue} onChange={setInputValue} />
     </AppLayout>
   );
 }

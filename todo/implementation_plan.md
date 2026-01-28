@@ -25,12 +25,14 @@ The system must support saving, retrieving, synthesizing, and managing both type
         - `created_at`: Timestamp.
 
 ### 2. PDF Ingestion & Tools
-- [ ] **Dependency Management**: Ensure `pypdf` or `langchain-community` document loaders are installed.
-- [ ] **New Tool `add_document`**: 
+- [ ] **Dependency Management**:
+    - Add `pypdf` to `backend/requirements.txt`.
+    - Use `PyPDFLoader` from `langchain-community` (already installed) for text extraction.
+- [ ] **New Tool `add_document`**:
     - Input: File path or UploadFile.
     - Process:
         1. Save file to `backend/uploads/`.
-        2. Load PDF and extract text.
+        2. Load PDF using `PyPDFLoader` and extract text page-by-page.
         3. Split text into semantic chunks (paragraphs).
         4. Generate tags for the document context.
         5. Save chunks to Vector Store with `source_type="document"` and page metadata.
