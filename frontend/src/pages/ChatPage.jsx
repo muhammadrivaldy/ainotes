@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import AppLayout from '../components/layout/AppLayout';
 import StreamFeed from '../components/chat/StreamFeed';
 import InputArea from '../components/chat/InputArea';
@@ -144,10 +144,14 @@ export default function ChatPage() {
     }
   };
 
+  const handleLocalMessage = useCallback((content) => {
+    setMessages((prev) => [...prev, { id: Date.now(), role: 'ai', content }]);
+  }, []);
+
   return (
     <AppLayout>
       <StreamFeed messages={messages} streamingMessageId={streamingMessageId} />
-      <InputArea onSend={handleSend} onClear={handleClear} onLocalMessage={(content) => setMessages((prev) => [...prev, { id: Date.now(), role: 'ai', content }])} value={inputValue} onChange={setInputValue} />
+      <InputArea onSend={handleSend} onClear={handleClear} onLocalMessage={handleLocalMessage} value={inputValue} onChange={setInputValue} />
     </AppLayout>
   );
 }
