@@ -1010,7 +1010,8 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
         Adds default values: source_type="chat", source="user", etc.
         Safe to run multiple times — skips already-migrated items.
         """
-        stats = {"total": 0, "migrated": 0, "already_migrated": 0, "errors": 0}
+        try:
+            stats = {"total": 0, "migrated": 0, "already_migrated": 0, "errors": 0}
             page_size = 5000
             offset = 0
 
@@ -1066,7 +1067,8 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
                 offset += len(metadatas)
                 if len(metadatas) < page_size:
                     break
-        except Exception as e:
-            logger.error(f"Error in migrate_legacy_metadata: {e}")
 
-        return stats
+            return stats
+        except Exception as e:
+            print(f"Error migrating legacy metadata: {e}")
+            return {"total": 0, "migrated": 0, "already_migrated": 0, "errors": 0}
