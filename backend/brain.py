@@ -1070,5 +1070,5 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
 
             return stats
         except Exception as e:
-            logger.error(f"Error migrating legacy metadata: {e}")
+            print(f"Error migrating legacy metadata: {e}")
             return {"total": 0, "migrated": 0, "already_migrated": 0, "errors": 0}
