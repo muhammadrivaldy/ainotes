@@ -1011,62 +1011,60 @@ Return ONLY the tags as a comma-separated list (e.g., "work, meeting" or "recipe
         Safe to run multiple times — skips already-migrated items.
         """
         stats = {"total": 0, "migrated": 0, "already_migrated": 0, "errors": 0}
-            page_size = 5000
-            offset = 0
+        page_size = 5000
+        offset = 0
 
-            while True:
-                results = self.vector_store.get(
-                    where={"user_id": self.user_id},
-                    limit=page_size,
-                    offset=offset,
-                )
+        while True:
+            results = self.vector_store.get(
+                where={"user_id": self.user_id},
+                limit=page_size,
+                offset=offset,
+            )
 
-                if not results or not results.get("metadatas"):
-                    break
+            if not results or not results.get("metadatas"):
+                break
 
-                metadatas = results["metadatas"]
-                ids = results.get("ids", [])
+            metadatas = results["metadatas"]
+            ids = results.get("ids", [])
 
-                for i, metadata in enumerate(metadatas):
-                    stats["total"] += 1
+            for i, metadata in enumerate(metadatas):
+                stats["total"] += 1
 
-                    if metadata.get("source_type"):
-                        stats["already_migrated"] += 1
+                if metadata.get("source_type"):
+                    stats["already_migrated"] += 1
+                    continue
+
+                try:
+                    # Guard against mismatched lengths between metadatas and ids
+                    if i >= len(ids):
+                        logger.error(
+                            f"Missing document ID for metadata index {i} during migration"
+                        )
+                        stats["errors"] += 1
                         continue
 
-                    try:
-                        # Guard against mismatched lengths between metadatas and ids
-                        if i >= len(ids):
-                            logger.error(
-                                f"Missing document ID for metadata index {i} during migration"
-                            )
-                            stats["errors"] += 1
-                            continue
+                    doc_id = ids[i]
+                    updated_metadata = {
+                        **metadata,
+                        "source_type": "chat",
+                        "source": "user",
+                        "source_path": "",
+                        "page": "",
+                        "created_at": datetime.now(timezone.utc).isoformat(),
+                    }
+                    self.vector_store._collection.update(
+                        ids=[doc_id],
+                        metadatas=[updated_metadata],
+                    )
+                    stats["migrated"] += 1
+                except Exception as e:
+                    logger.error(f"Error migrating item {i}: {e}")
+                    stats["errors"] += 1
 
-                        doc_id = ids[i]
-                        updated_metadata = {
-                            **metadata,
-                            "source_type": "chat",
-                            "source": "user",
-                            "source_path": "",
-                            "page": "",
-                            "created_at": datetime.now(timezone.utc).isoformat(),
-                        }
-                        self.vector_store._collection.update(
-                            ids=[doc_id],
-                            metadatas=[updated_metadata],
-                        )
-                        stats["migrated"] += 1
-                    except Exception as e:
-                        logger.error(f"Error migrating item {i}: {e}")
-                        stats["errors"] += 1
-
-                # Move to the next page; if fewer than page_size items were returned,
-                # we've reached the end of the collection.
-                offset += len(metadatas)
-                if len(metadatas) < page_size:
-                    break
-        except Exception as e:
-            logger.error(f"Error in migrate_legacy_metadata: {e}")
+            # Move to the next page; if fewer than page_size items were returned,
+            # we've reached the end of the collection.
+            offset += len(metadatas)
+            if len(metadatas) < page_size:
+                break
 
         return stats
