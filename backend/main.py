@@ -188,6 +188,8 @@ async def upload_document(
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
 
+    file_path = None  # Initialize to prevent NameError in exception handler
+    
     # Create user-specific upload directory
     user_upload_dir = os.path.join(UPLOADS_DIR, str(current_user.id))
     os.makedirs(user_upload_dir, exist_ok=True)
