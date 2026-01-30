@@ -19,10 +19,10 @@ import re
 import logging
 from datetime import datetime, timezone
 
-from fastapi import FastAPI, HTTPException, Depends, Request, UploadFile, File
+from fastapi import FastAPI, HTTPException, Depends, Request, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from sqlmodel import Session, select
-from typing import List
+from typing import List, Optional
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -195,14 +195,17 @@ def is_valid_pdf(file_path: str) -> bool:
         logger.error(f"Unexpected error validating PDF file {file_path}: {e}")
         return False
 
-@app.post("/documents/upload", response_model=DocumentUploadResponse)
+@app.post("/documents/upload", response_model=DocumentUploadResponse, deprecated=True)
 @limiter.limit("5/minute")
 async def upload_document(
     request: Request,
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user)
 ):
-    """Upload a PDF document and index it into the knowledge base."""
+    """
+    [DEPRECATED] Upload a PDF document and index it into the knowledge base.
+    Use /chat endpoint with file attachment instead for context-aware processing.
+    """
     if not file.filename or not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are supported")
 
@@ -311,17 +314,101 @@ async def migrate_knowledge(
 @limiter.limit("5/minute")
 async def chat_endpoint(
     request: Request,
-    body: ChatRequest,
+    message: str = Form(...),
+    file: Optional[UploadFile] = File(None),
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
-    """Process a chat message for the authenticated user."""
+    """Process a chat message for the authenticated user, with optional file attachment."""
+    file_path = None
+    file_saved = False
+    
     try:
-        # 1. Save User Message to DB
+        # Handle file if provided
+        pdf_context = None
+        if file:
+            if not file.filename or not file.filename.lower().endswith(".pdf"):
+                raise HTTPException(status_code=400, detail="Only PDF files are supported")
+            
+            # Create user-specific upload directory
+            user_upload_dir = os.path.join(UPLOADS_DIR, str(current_user.id))
+            os.makedirs(user_upload_dir, exist_ok=True)
+
+            # Save file temporarily
+            timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            original_filename = os.path.basename(file.filename)
+            sanitized_filename = re.sub(r'[^A-Za-z0-9._-]', '_', original_filename)
+            safe_filename = f"{timestamp}_{sanitized_filename}"
+            file_path = os.path.join(user_upload_dir, safe_filename)
+
+            # Read and write file in chunks with size validation
+            bytes_read = 0
+            chunk_size = 1024 * 1024  # 1MB chunks
+            size_exceeded = False
+            
+            with open(file_path, "wb") as f:
+                while True:
+                    chunk = await file.read(chunk_size)
+                    if not chunk:
+                        break
+                    
+                    if bytes_read + len(chunk) > MAX_UPLOAD_SIZE:
+                        size_exceeded = True
+                        break
+                    
+                    f.write(chunk)
+                    bytes_read += len(chunk)
+            
+            if size_exceeded:
+                os.remove(file_path)
+                max_size_mb = MAX_UPLOAD_SIZE / (1024 * 1024)
+                raise HTTPException(
+                    status_code=413,
+                    detail=f"File size exceeds maximum allowed size of {max_size_mb:.0f}MB"
+                )
+
+            # Validate PDF
+            if not is_valid_pdf(file_path):
+                try:
+                    os.remove(file_path)
+                except Exception as e:
+                    logger.error(f"Failed to remove invalid PDF file {file_path}: {e}")
+                raise HTTPException(
+                    status_code=400,
+                    detail="Invalid PDF file. The file does not contain valid PDF content."
+                )
+
+            # Extract PDF text for context
+            user_brain = get_user_brain(current_user.id)
+            pdf_data = user_brain.extract_pdf_text(file_path)
+            
+            if "error" in pdf_data:
+                raise HTTPException(status_code=400, detail=pdf_data["error"])
+            
+            pdf_context = f"\n\n[ATTACHED DOCUMENT: {pdf_data['filename']} ({pdf_data['page_count']} pages)]\n{pdf_data['preview']}\n[END OF DOCUMENT PREVIEW]"
+
+        # Detect save intent from message
+        save_keywords = [
+            "save", "index", "add to knowledge", "remember this document",
+            "store", "keep", "add this", "save this"
+        ]
+        should_save = any(keyword in message.lower() for keyword in save_keywords)
+
+        # If user wants to save, process the document first
+        save_result = None
+        if file and should_save and file_path:
+            user_brain = get_user_brain(current_user.id)
+            add_doc_tool = next((t for t in user_brain.tools if t.name == "add_document"), None)
+            if add_doc_tool:
+                save_result = add_doc_tool.func(file_path=file_path)
+                file_saved = True
+
+        # 1. Save User Message to DB (original message without PDF context)
         user_msg = ChatMessage(
             user_id=current_user.id,
             role="user",
-            content=body.message
+            content=message,
+            attachment_name=file.filename if file else None
         )
         session.add(user_msg)
         session.commit()
@@ -339,7 +426,18 @@ async def chat_endpoint(
 
         # 3. Process with user-specific Brain
         user_brain = get_user_brain(current_user.id)
-        response_text = user_brain.process_message(body.message, brain_history)
+        
+        # Pass PDF context to process_message if file was provided but not saved
+        if file and pdf_context and not should_save:
+            # Extract PDF data for passing to brain
+            pdf_data = user_brain.extract_pdf_text(file_path)
+            response_text = user_brain.process_message(message, brain_history, pdf_context=pdf_data)
+        elif file and should_save and save_result:
+            # If saved, let user know and process message normally
+            response_text = f"{save_result}\n\nHow can I help you with this document?"
+        else:
+            # Normal message processing without file
+            response_text = user_brain.process_message(message, brain_history)
 
         # 4. Save AI Response to DB
         ai_msg = ChatMessage(
@@ -351,9 +449,18 @@ async def chat_endpoint(
         session.commit()
 
         return ChatResponse(response=response_text, suggestions=[])
+    except HTTPException:
+        raise
     except Exception as e:
-        print(f"Error processing chat: {e}")
+        logger.error(f"Error processing chat: {e}")
         raise HTTPException(status_code=500, detail="An internal error occurred. Please try again later.")
+    finally:
+        # Clean up temporary file if not saved to knowledge base
+        if file_path and not file_saved and os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except Exception as e:
+                logger.error(f"Failed to cleanup temporary file {file_path}: {e}")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

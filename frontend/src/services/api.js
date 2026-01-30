@@ -113,17 +113,28 @@ export const getCurrentUser = async () => {
 /**
  * Send a message to the AI assistant
  * @param {string} message - The user's message
+ * @param {File} file - Optional file attachment
  * @returns {Promise<{response: string}>} - The AI's response
  */
-export const sendMessage = async (message) => {
+export const sendMessage = async (message, file = null) => {
   try {
+    const formData = new FormData();
+    formData.append('message', message);
+    
+    if (file) {
+      formData.append('file', file);
+    }
+    
+    // We do NOT set Content-Type header manually for FormData,
+    // let browser set it with boundary
+    const headers = {
+      'Authorization': `Bearer ${getToken()}`
+    };
+
     const response = await fetch(`${API_BASE_URL}/chat`, {
       method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({
-        message: message,
-        history: [], // Backend tracks history in database
-      }),
+      headers: headers,
+      body: formData,
     });
 
     return handleResponse(response);

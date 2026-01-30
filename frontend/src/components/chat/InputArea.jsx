@@ -16,12 +16,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Trash2, Upload } from 'lucide-react';
-import { uploadDocument } from '../../services/api';
+import { Send, Trash2, Upload, X, FileText } from 'lucide-react';
 
 export default function InputArea({ onSend, onClear, onLocalMessage, disabled, value, onChange }) {
   const [localInput, setLocalInput] = useState('');
   const [uploadStatus, setUploadStatus] = useState(null);
+  const [attachedFile, setAttachedFile] = useState(null);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -32,8 +32,9 @@ export default function InputArea({ onSend, onClear, onLocalMessage, disabled, v
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!input.trim() || disabled) return;
-    onSend(input);
+    onSend(input, attachedFile);
     setInput('');
+    setAttachedFile(null);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto'; // Reset height
     }
@@ -54,7 +55,7 @@ export default function InputArea({ onSend, onClear, onLocalMessage, disabled, v
     }
   }, [input]);
 
-  const handleFileUpload = async (e) => {
+  const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -64,23 +65,33 @@ export default function InputArea({ onSend, onClear, onLocalMessage, disabled, v
       return;
     }
 
-    setUploadStatus({ type: 'loading', message: 'Uploading...' });
-    try {
-      const result = await uploadDocument(file);
-      setUploadStatus({ type: 'success', message: `Uploaded: ${result.filename} (${result.chunks_added} chunks)` });
-      if (onLocalMessage) {
-        onLocalMessage(`Document **"${result.filename}"** has been uploaded and indexed with **${result.chunks_added} knowledge chunks**. You can now ask questions about its content.`);
-      }
-      setTimeout(() => setUploadStatus(null), 4000);
-    } catch (error) {
-      setUploadStatus({ type: 'error', message: error.message || 'Upload failed' });
-      setTimeout(() => setUploadStatus(null), 3000);
-    }
+    setAttachedFile(file);
+    setUploadStatus({ type: 'success', message: `File attached: ${file.name}` });
+    setTimeout(() => setUploadStatus(null), 3000);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemoveFile = () => {
+    setAttachedFile(null);
+    setUploadStatus(null);
   };
 
   return (
     <div className="mx-auto w-full max-w-4xl p-4 pb-6">
+      {/* File Attachment Preview */}
+      {attachedFile && (
+        <div className="mb-2 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-2 dark:border-blue-800 dark:bg-blue-900/20">
+          <FileText size={16} className="text-blue-600 dark:text-blue-400" />
+          <span className="flex-1 truncate text-sm text-blue-900 dark:text-blue-100">{attachedFile.name}</span>
+          <button
+            onClick={handleRemoveFile}
+            className="rounded-full p-1 text-blue-600 transition-colors hover:bg-blue-100 dark:text-blue-400 dark:hover:bg-blue-800"
+            title="Remove attachment"
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
       <div className="relative flex items-center gap-2 rounded-3xl border border-gray-200 bg-white p-2 shadow-lg transition-colors dark:border-gray-700 dark:bg-gray-800">
         {/* Clear Button */}
         <button type="button" onClick={onClear} className="rounded-full p-3 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20" title="Clear conversation">

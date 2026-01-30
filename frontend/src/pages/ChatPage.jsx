@@ -42,6 +42,7 @@ export default function ChatPage() {
         id: msg.id,
         role: msg.role === 'assistant' ? 'ai' : msg.role,
         content: msg.content,
+        file: msg.attachment_name ? { name: msg.attachment_name } : null,
       }));
 
       // Add welcome message if history is empty
@@ -55,12 +56,13 @@ export default function ChatPage() {
     }
   };
 
-  const handleSend = async (text) => {
+  const handleSend = async (text, file = null) => {
     // 1. Add User Message immediately
     const userMsg = {
       id: Date.now(),
       role: 'user',
       content: text,
+      file: file, // Include file info for display
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -75,8 +77,8 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, loadingMsg]);
 
     try {
-      // 3. Call backend API
-      const response = await sendMessage(text);
+      // 3. Call backend API with optional file
+      const response = await sendMessage(text, file);
 
       // 4. Replace loading message with AI response
       const aiMessageId = Date.now() + 1;

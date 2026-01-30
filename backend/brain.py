@@ -183,21 +183,21 @@ class SecondBrain:
 
             help_message = """I'm your Knowledge Assistant — I help you save and retrieve information from conversations and uploaded documents.
 
-            **What I can do:**
+**What I can do:**
 
-            💾 **Save** - "Remember that my dentist appointment is next Tuesday at 3pm"
-            🔍 **Search** - "What do I have scheduled next week?"
-            📄 **Upload documents** - Use the upload button to add PDFs
-            🏷️ **Manage tags** - "What tags do I have?"
-            🗑️ **Delete** - "Delete the note about the dentist"
-            📚 **View all** - "What knowledge do you have?"
+💾 **Save** - "Remember that my dentist appointment is next Tuesday at 3pm"
+🔍 **Search** - "What do I have scheduled next week?"
+📄 **Upload documents** - Use the upload button to add PDFs
+🏷️ **Manage tags** - "What tags do I have?"
+🗑️ **Delete** - "Delete the note about the dentist"
+📚 **View all** - "What knowledge do you have?"
 
-            **Key features:**
-            - Automatic tagging and organization
-            - Semantic search (understands meaning, not just keywords)
-            - Document citations with page numbers
-            - Private and isolated to your account
-            """
+**Key features:**
+- Automatic tagging and organization
+- Semantic search (understands meaning, not just keywords)
+- Document citations with page numbers
+- Private and isolated to your account
+"""
             
             if has_data:
                 return help_message + "\nWhat would you like to do? Search, save, or explore your existing knowledge!"
@@ -721,6 +721,38 @@ class SecondBrain:
 
         self.app = workflow.compile()
 
+    def extract_pdf_text(self, file_path: str) -> dict:
+        """
+        Extract text from PDF without saving to knowledge base.
+        Returns dict with filename, page_count, and full_text.
+        """
+        try:
+            path = Path(file_path)
+            if not path.exists():
+                return {"error": f"File not found at {file_path}"}
+            if path.suffix.lower() != ".pdf":
+                return {"error": f"Only PDF files are supported. Got: {path.suffix}"}
+
+            filename = path.name
+            loader = PyPDFLoader(file_path)
+            pages = loader.load()
+
+            if not pages:
+                return {"error": f"No content extracted from {filename}"}
+
+            # Extract text from all pages
+            full_text = "\n\n".join([page.page_content for page in pages])
+            
+            return {
+                "filename": filename,
+                "page_count": len(pages),
+                "full_text": full_text,
+                "preview": full_text[:1000] + "..." if len(full_text) > 1000 else full_text
+            }
+        except Exception as e:
+            logger.error(f"Error extracting PDF text: {e}")
+            return {"error": str(e)}
+
     def call_model(self, state: AgentState):
         messages = state["messages"]
 
@@ -747,13 +779,29 @@ class SecondBrain:
             return "tools"
         return "__end__"
 
-    def process_message(self, message: str, history: List) -> str:
+    def process_message(self, message: str, history: List, pdf_context: dict = None) -> str:
         forbidden_phrases = [
             "ignore previous instructions", "change your role", "become", "act as", "pretend", "jailbreak",
             "change your behavior", "change your purpose", "change your instructions", "system prompt"
         ]
         if any(phrase in message.lower() for phrase in forbidden_phrases):
             return "Sorry, I am only allowed to save and retrieve information for you."
+
+        # If PDF context is provided, handle it directly without tools
+        if pdf_context and not pdf_context.get("error"):
+            # Create a special prompt that includes the document content
+            doc_prompt = f"""The user has attached a document: {pdf_context['filename']} ({pdf_context['page_count']} pages).
+
+Document content preview:
+{pdf_context['preview']}
+
+User's question/request: {message}
+
+Please respond to the user's request about this document. Answer their questions or perform the requested analysis based on the document content shown above."""
+
+            # Use the LLM directly without tools for document analysis
+            response = self.llm.invoke([HumanMessage(content=doc_prompt)])
+            return response.content
 
         chat_history = []
         for msg in history:

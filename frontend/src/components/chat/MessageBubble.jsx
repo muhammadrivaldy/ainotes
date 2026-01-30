@@ -19,7 +19,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
-import { Bot, User } from 'lucide-react';
+import { Bot, User, FileText } from 'lucide-react';
 import { useTypewriter } from '../../hooks/useTypewriter';
 import { useAuth } from '../../context/AuthContext';
 import TagChips from './TagChips';
@@ -31,6 +31,9 @@ export default function MessageBubble({ message, isStreaming = false }) {
   const { displayedText, isComplete } = useTypewriter(message.content, 20, isStreaming && !isUser);
 
   const contentToDisplay = isStreaming && !isUser ? displayedText : message.content;
+
+  // Check if message has a file attachment (added for local display only)
+  const attachedFile = message.file;
 
   // Parse tags from AI response (format: "Information stored successfully with tags: work, meeting")
   const parseTags = (content) => {
@@ -86,6 +89,18 @@ export default function MessageBubble({ message, isStreaming = false }) {
           <div className={`prose prose-sm max-w-none wrap-break-word ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
             <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{cleanContent}</ReactMarkdown>
           </div>
+          
+          {/* File Attachment Display */}
+          {attachedFile && (
+            <div className={`mt-3 flex items-center gap-2 rounded-lg border p-2 ${
+              isUser 
+                ? 'border-white/20 bg-white/10 text-white' 
+                : 'border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-100'
+            }`}>
+              <FileText size={16} />
+              <span className="text-sm truncate">{attachedFile.name}</span>
+            </div>
+          )}
         </div>
 
         {/* Citation chips - shown below AI message bubble for document sources */}
