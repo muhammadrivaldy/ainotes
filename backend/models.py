@@ -36,6 +36,7 @@ class ChatMessage(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id", index=True)
     role: str  # "user" or "assistant"
     content: str
+    attachment_name: Optional[str] = None  # Filename of attached document
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationship to user
